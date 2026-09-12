@@ -1,0 +1,1 @@
+Add the ten personnel photos using the filenames listed in README.txt

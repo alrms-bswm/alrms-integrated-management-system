@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALRMS | ALMED BSWM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand revised-brand">
+      <div class="logo-large">
+        <img id="almed-logo" src="assets/almed-logo.png" alt="ALMED Logo"
+             onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='flex'">
+        <span id="logo-fallback">ALMED</span>
+      </div>
+      <div class="brand-name">Agricultural Land Management and Evaluation Division</div>
+      <div class="agency-name">Bureau of Soils and Water Management</div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-page="dashboard"><span class="icon">▦</span><span>Dashboard</span></button>
+      <button class="nav-item" data-page="emails"><span class="icon">✉</span><span>Email Management</span></button>
+
+      <div class="nav-group">
+        <button class="nav-item nav-parent" id="database-toggle" type="button">
+          <span class="icon">▤</span><span>Database</span><span class="chevron">⌄</span>
+        </button>
+        <div class="submenu open" id="database-submenu">
+          <button class="sub-item" data-page="npaaad"><span class="sub-icon">◈</span><span>NPAAAD and SAFDZ Database</span></button>
+          <button class="sub-item" data-page="harmonization"><span class="sub-icon">⇄</span><span>Harmonization and Integration Database</span></button>
+          <button class="sub-item" data-page="eo79"><span class="sub-icon">◉</span><span>EO79 Matters Database</span></button>
+        </div>
+      </div>
+
+      <button class="nav-item" data-page="reports"><span class="icon">▤</span><span>Reports</span></button>
+      <button class="nav-item" data-page="personnel"><span class="icon">♙</span><span>Personnel</span></button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="prototype-badge">PROTOTYPE</span>
+      <div>ALRMS.ALMED.BSWM</div>
+      <small>Internal office system</small>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="page-title">AGRICULTURAL LAND RESOURCES MANAGEMENT SECTION</h1>
+        <p id="page-subtitle">ALRMS Integrated Management and Monitoring System</p>
+      </div>
+      <div class="header-right">
+        <span class="online"><i></i> System Online</span>
+        <button class="admin-btn">Admin ▾</button>
+      </div>
+    </header>
+
+    <section id="dashboard" class="page active-page">
+      <div class="request-grid">
+        <div class="section-card npaaad-summary-card" id="npaaad-summary-card">
+          <div class="section-title-row">
+            <div class="summary-card-icon" aria-hidden="true">▤</div>
+            <div class="section-title">Requests for NPAAAD and SAFDZ</div>
+            <span class="live-source-badge" id="npaaad-live-status">Live</span>
+          </div>
+          <div class="mini-grid">
+            <button class="mini-card completed npaaad-status-card" type="button" data-npaaad-status="completed">
+              <div><small>Completed</small><strong id="npaaad-completed-count">—</strong></div>
+            </button>
+            <button class="mini-card ongoing npaaad-status-card" type="button" data-npaaad-status="processing">
+              <div><small>Processing</small><strong id="npaaad-processing-count">—</strong></div>
+            </button>
+            <button class="mini-card pending npaaad-status-card npaaad-pending-breakdown" type="button" data-npaaad-status="pending">
+              <div class="npaaad-pending-inner">
+                <div class="npaaad-pending-total"><small>Pending</small><strong id="npaaad-pending-count">—</strong></div>
+                <div class="npaaad-pending-subcounts" aria-label="Pending breakdown">
+                  <span><b>CSM</b><strong id="npaaad-csm-count">—</strong></span>
+                  <span><b>Data</b><strong id="npaaad-data-count">—</strong></span>
+                </div>
+              </div>
+            </button>
+          </div>
+          <div class="summary-card-arrow" aria-hidden="true">›</div><div class="live-update-note" id="npaaad-update-note">Loading live status data from Google Sheets…</div>
+        </div>
+        <div class="section-card integration-summary-card" id="integration-summary-card">
+          <div class="section-title-row">
+            <div class="summary-card-icon" aria-hidden="true">▤</div>
+            <div class="section-title">Requests for Integration and Harmonization</div>
+            <span class="live-source-badge" id="integration-live-status">Live</span>
+          </div>
+          <div class="mini-grid">
+            <button class="mini-card completed integration-status-card" type="button" data-integration-status="completed">
+              <div><small>Completed</small><strong id="integration-completed-count">—</strong></div>
+            </button>
+            <button class="mini-card ongoing integration-status-card" type="button" data-integration-status="processing">
+              <div><small>Processing</small><strong id="integration-processing-count">—</strong></div>
+            </button>
+            <button class="mini-card pending integration-status-card" type="button" data-integration-status="pending">
+              <div><small>Pending</small><strong id="integration-pending-count">—</strong></div>
+            </button>
+          </div>
+          <div class="summary-card-arrow" aria-hidden="true">›</div><div class="live-update-note" id="integration-update-note">Loading live status data from Google Sheets…</div>
+        </div>
+        <div class="section-card eo79-summary-card" id="eo79-summary-card">
+          <div class="section-title-row">
+            <div class="summary-card-icon" aria-hidden="true">▤</div>
+            <div class="section-title">E.O. 79 Matters</div>
+            <span class="live-source-badge" id="eo79-live-status">Live</span>
+          </div>
+          <div class="mini-grid">
+            <button class="mini-card completed eo79-status-card" type="button" data-eo79-status="completed">
+              <div><small>Completed</small><strong id="eo79-completed-count">—</strong></div>
+            </button>
+            <button class="mini-card ongoing eo79-status-card" type="button" data-eo79-status="processing">
+              <div><small>Processing</small><strong id="eo79-processing-count">—</strong></div>
+            </button>
+            <button class="mini-card pending eo79-status-card" type="button" data-eo79-status="pending">
+              <div><small>Pending</small><strong id="eo79-pending-count">—</strong></div>
+            </button>
+          </div>
+          <div class="summary-card-arrow" aria-hidden="true">›</div><div class="live-update-note" id="eo79-update-note">Loading live status data from Google Sheets…</div>
+        </div>
+      </div>
+
+      <div class="dashboard-main-grid">
+        <div class="panel map-panel enlarged-map">
+          <div class="panel-head map-panel-head">
+            <div>
+              <h2>Philippines SAFDZ Integration Map</h2>
+              <p>Municipal boundaries matched to the live Integration &amp; Harmonization requests in Google Sheets.</p>
+            </div>
+            <div class="map-legend" aria-label="Map status legend">
+              <span><i class="legend-dot map-status-completed"></i>Completed</span>
+              <span><i class="legend-dot map-status-processing"></i>Processing</span>
+              <span><i class="legend-dot map-status-pending"></i>Pending</span>
+              <span><i class="legend-dot map-status-none"></i>No Integration</span>
+            </div>
+          </div>
+          <div class="map-toolbar">
+            <div class="map-search-wrap">
+              <span class="map-search-icon">⌕</span>
+              <input id="map-search" class="map-search" type="search" placeholder="Search municipality, province, or address…" autocomplete="off">
+              <button id="map-search-clear" class="map-search-clear" type="button" title="Clear search">×</button>
+            </div>
+            <div class="map-filter-group" aria-label="Map status filters">
+              <button type="button" class="map-filter active" data-map-filter="all">All</button>
+              <button type="button" class="map-filter" data-map-filter="completed">Completed</button>
+              <button type="button" class="map-filter" data-map-filter="processing">Processing</button>
+              <button type="button" class="map-filter" data-map-filter="pending">Pending</button>
+            </div>
+            <span id="map-live-note" class="map-live-note">Loading live map status…</span>
+          </div>
+          <div id="map"></div>
+        </div>
+
+        <div class="dashboard-side-column">
+          <div class="panel integration-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Integration Summary</h2>
+              </div>
+            </div>
+            <div class="progress-list integration-status-distribution">
+              <div>
+                <div><span><i class="summary-status-dot completed-dot"></i>Completed</span><b id="p-green">—</b></div>
+                <div class="progress"><i id="bar-green"></i></div>
+              </div>
+              <div>
+                <div><span><i class="summary-status-dot processing-dot"></i>Processing</span><b id="p-blue">—</b></div>
+                <div class="progress"><i id="bar-blue"></i></div>
+              </div>
+              <div>
+                <div><span><i class="summary-status-dot pending-dot"></i>Pending</span><b id="p-yellow">—</b></div>
+                <div class="progress"><i id="bar-yellow"></i></div>
+              </div>
+              <div>
+                <div><span><i class="summary-status-dot no-integration-dot"></i>No Integration</span><b id="p-gray">—</b></div>
+                <div class="progress"><i id="bar-gray"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel activity-panel">
+            <div class="panel-head">
+              <div>
+                <h2>ALRMS Activities and Schedules</h2>
+                
+              </div>
+            </div>
+            <div class="alrms-calendar-wrap">
+              <div class="alrms-calendar-toolbar">
+                <button type="button" class="calendar-nav-btn" id="alrms-cal-prev" aria-label="Previous month">‹</button>
+                <div class="alrms-calendar-title" id="alrms-cal-title">Loading calendar…</div>
+                <button type="button" class="calendar-nav-btn" id="alrms-cal-next" aria-label="Next month">›</button>
+              </div>
+              <div class="alrms-calendar-weekdays" aria-hidden="true">
+                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+              </div>
+              <div id="alrms-calendar-grid" class="alrms-calendar-grid" aria-live="polite"></div>
+              <div class="alrms-calendar-legend">
+                <span><i class="calendar-key holiday-key"></i> Philippine holiday</span>
+                <span><i class="calendar-key schedule-key"></i> ALRMS schedule</span>
+                <span class="calendar-help">Click a date to add or edit a schedule.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="emails" class="page">
+      <div class="page-card">
+        <div class="page-card-head"><div><h2>Email Management</h2><p>Centralized monitoring of incoming ALMED emails.</p></div><button class="primary">+ Add Email</button></div>
+        <input class="search" placeholder="Search sender, subject, assigned staff, or status..." oninput="filterTable(this,'email-table')">
+        <div class="table-wrap"><table id="email-table"><thead><tr><th>Date Received</th><th>Sender</th><th>Subject</th><th>Assigned To</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="npaaad" class="page">
+      <div class="page-card database-card">
+        <h2>NPAAAD and SAFDZ Database</h2>
+        <p>This section is connected to the division's Google Sheets database.</p>
+        <a class="primary link-btn" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1ZToIiqNIkTejiJ50n3kIbPLLrvQno8b9/edit?gid=1353377872#gid=1353377872">Open NPAAAD and SAFDZ Database ↗</a>
+      </div>
+    </section>
+
+    <section id="eo79" class="page">
+      <div class="page-header">
+        <div>
+          <h2>EO79 Matters Database</h2>
+          <p>Access the ALRMS EO79 matters database.</p>
+        </div>
+      </div>
+      <div class="panel database-launcher">
+        <div class="database-icon">◉</div>
+        <div>
+          <h2>EO79 Matters Database</h2>
+          <p>This database is maintained in Google Sheets. Select the button below to open the live database.</p>
+          <a class="primary-button" href="https://docs.google.com/spreadsheets/d/1q-LvcPGu7NCfBIY60CsZS0KXCeVpduFehTQ04UD4Gk0/edit?gid=249796757#gid=249796757" target="_blank" rel="noopener noreferrer">Open EO79 Matters Database ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="harmonization" class="page">
+      <div class="page-card database-card">
+        <h2>Harmonization and Integration Database</h2>
+        <p>This section is connected to the division's Google Sheets database.</p>
+        <a class="primary link-btn" target="_blank" rel="noopener" href="https://docs.google.com/spreadsheets/d/1_K8VRKFQ4bXzSMCbt7VaF7omJLqT0Q8ouKdKzkvuyHA/edit?gid=0#gid=0">Open Harmonization and Integration Database ↗</a>
+      </div>
+    </section>
+
+    <section id="reports" class="page">
+      <div class="reports-page">
+        <div class="page-card reports-intro-card">
+          <div class="page-card-head">
+            <div><h2>Reports</h2><p>Generate organized reports directly from the live ALRMS databases.</p></div>
+          </div>
+        </div>
+
+        <div class="report-card-grid">
+          <button class="report-launch-card report-npaaad" type="button" id="open-npaaad-report">
+            <span class="report-launch-icon">▤</span>
+            <span class="report-launch-body"><b>NPAAAD and SAFDZ Request Report</b><small>Live request listing grouped into Completed, Processing, and Pending.</small></span>
+            <span class="report-launch-arrow">›</span>
+          </button>
+          <button class="report-launch-card report-harmonization" type="button" id="open-harmonization-report">
+            <span class="report-launch-icon">▤</span>
+            <span class="report-launch-body"><b>Integration and Harmonization Report</b><small>Report card reserved for the live Integration and Harmonization data.</small></span>
+            <span class="report-launch-arrow">›</span>
+          </button>
+          <button class="report-launch-card report-eo79" type="button" id="open-eo79-report">
+            <span class="report-launch-icon">▤</span>
+            <span class="report-launch-body"><b>E.O. 79 Matters Report</b><small>Live E.O. 79 request listing grouped into Completed, Processing, and Pending.</small></span>
+            <span class="report-launch-arrow">›</span>
+          </button>
+        </div>
+
+        <div id="report-viewer" class="report-viewer" hidden>
+          <div class="report-viewer-toolbar">
+            <div><h2 id="report-viewer-title">Report</h2><p id="report-viewer-meta"></p></div>
+            <div class="report-toolbar-actions">
+              <button type="button" class="secondary-btn" id="report-back">← Back to Reports</button>
+              <button type="button" class="secondary-btn" id="report-print">Print</button><button type="button" class="primary" id="report-download">Save PDF</button>
+            </div>
+          </div>
+          <div id="npaaad-report-document" class="report-document"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="personnel" class="page">
+      <div class="page-card">
+        <div class="page-card-head"><div><h2>ALRMS Personnel</h2><p>Personnel directory of the Agricultural Land Resources Management Section.</p></div></div>
+        <div class="whereabouts-bar">
+          <a class="whereabouts-button" href="https://docs.google.com/spreadsheets/d/1tSBxP8mEAMJw_TvM3jEv_yUTCeb2nl5uPS9M4QJXkP8/edit?gid=660989601#gid=660989601" target="_blank" rel="noopener noreferrer">📅 ALRMS Personnel Whereabouts ↗</a>
+        </div>
+        <div id="personnel-grid" class="personnel-grid"></div>
+      </div>
+    </section>
+
+    <div id="schedule-modal" class="schedule-modal-backdrop" aria-hidden="true">
+      <div class="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="schedule-title">
+        <div class="schedule-modal-head">
+          <div><h3 id="schedule-title">Personnel Schedule</h3><small id="schedule-person"></small></div>
+          <button class="schedule-close" id="schedule-close" aria-label="Close">×</button>
+        </div>
+        <div id="schedule-body" class="schedule-modal-body"></div>
+      </div>
+    </div>
+
+
+    <div id="alrms-calendar-modal" class="schedule-modal-backdrop" aria-hidden="true">
+      <div class="schedule-modal alrms-calendar-editor" role="dialog" aria-modal="true" aria-labelledby="alrms-editor-title">
+        <div class="schedule-modal-head">
+          <div><h3 id="alrms-editor-title">Add Schedule</h3><small id="alrms-editor-date"></small></div>
+          <button class="schedule-close" id="alrms-editor-close" aria-label="Close">×</button>
+        </div>
+        <div class="alrms-editor-body">
+          <div id="alrms-day-events" class="alrms-day-events"></div>
+          <form id="alrms-schedule-form" class="alrms-schedule-form">
+            <input type="hidden" id="alrms-edit-id">
+            <label>Schedule / Activity<input id="alrms-event-title" type="text" maxlength="120" placeholder="e.g., Technical validation in Pura" required></label>
+            <div class="alrms-form-row">
+              <label>Time <input id="alrms-event-time" type="time"></label>
+              <label>Location / Notes <input id="alrms-event-notes" type="text" maxlength="160" placeholder="Optional"></label>
+            </div>
+            <div class="alrms-form-actions">
+              <button type="button" class="calendar-secondary-btn" id="alrms-form-cancel">Clear</button>
+              <button type="submit" class="calendar-primary-btn">Save Schedule</button>
+            </div>
+          </form>
+          <div class="alrms-storage-note">Schedules are saved in this browser on this computer. Philippine holidays are built into the calendar.</div>
+        </div>
+      </div>
+    </div>
+
+
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="assets/municipal-boundaries-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1314 @@
+:root{
+  --navy:#123b5d; --navy-2:#0d2e49; --green:#2f855a; --green-2:#3c9a68;
+  --blue:#3182ce; --yellow:#d69e2e; --bg:#f3f6f8; --text:#17324a; --muted:#718096;
+  --border:#dfe6eb; --white:#fff;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.sidebar{position:fixed;inset:0 auto 0 0;width:250px;background:linear-gradient(180deg,var(--navy-2),var(--navy));color:#fff;display:flex;flex-direction:column;padding:22px 14px;z-index:20}
+.brand{display:flex;gap:12px;align-items:center;padding:2px 8px 22px;border-bottom:1px solid rgba(255,255,255,.14)}
+.logo-box{width:46px;height:46px;border-radius:12px;background:#2d9864;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 46px}
+.logo-box img{width:100%;height:100%;object-fit:contain;background:#fff}.logo-box span{font-weight:800;font-size:15px}
+.brand-text strong{font-size:12px;line-height:1.25;display:block;letter-spacing:.1px}.brand-text small{display:block;margin-top:5px;color:#a9c1d3;font-size:9px}
+.nav{padding-top:18px;display:flex;flex-direction:column;gap:5px}.nav-item{border:0;background:transparent;color:#dbe8f0;text-align:left;padding:12px 11px;border-radius:9px;display:flex;gap:11px;align-items:center;font:500 12px Inter;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,.08)}.nav-item.active{background:#1e5a82;color:#fff}.icon{width:18px;text-align:center;font-size:14px}
+.sidebar-footer{margin-top:auto;padding:10px 8px 2px;color:#a9c1d3;font-size:10px;line-height:1.7}.prototype-badge{display:inline-block;background:#f2c94c;color:#182b3d;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:800;margin-bottom:5px}
+.main{margin-left:250px;min-height:100vh}
+.topbar{height:96px;background:linear-gradient(115deg,#5a0c16 0%,#761522 48%,#9a2635 100%);border-bottom:3px solid #b58a35;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 14px rgba(76,10,20,.18)}
+.topbar h1{font-size:24px;line-height:1.15;margin:0 0 7px;font-weight:800;letter-spacing:.35px;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.16)}
+.topbar p{font-size:11px;line-height:1.4;color:#f3dfe2;margin:0;letter-spacing:.2px}
+.header-right{display:flex;align-items:center;gap:18px}.online{font-size:11px;color:#f6e7e9}.online i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#69c48c;margin-right:7px;box-shadow:0 0 0 3px rgba(255,255,255,.10)}
+.admin-btn{background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.65);border-radius:8px;padding:9px 13px;font:600 11px Inter;color:#5a0c16;box-shadow:0 2px 5px rgba(0,0,0,.10)}
+.page{display:none;padding:24px 26px}.active-page{display:block}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.section-card,.stat-card,.panel,.page-card{background:#fff;border:1px solid var(--border);border-radius:9px;box-shadow:0 1px 2px rgba(17,40,60,.04)}
+.section-card{padding:15px}.section-title{font-size:12px;font-weight:700;margin-bottom:13px}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.mini-card{border:1px solid var(--border);border-radius:8px;padding:11px;display:flex;align-items:center;gap:9px}.mini-card .dot,.legend-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.mini-card small{display:block;color:var(--muted);font-size:9px}.mini-card strong{font-size:20px;display:block;margin-top:2px}.completed .dot,.green{background:var(--green)}.ongoing .dot,.blue{background:var(--blue)}.pending .dot,.yellow{background:var(--yellow)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}.stat-card{padding:17px;border-left:4px solid transparent}.stat-card.accent-green{border-left-color:var(--green)}.stat-card.accent-blue{border-left-color:var(--blue)}.stat-card.accent-yellow{border-left-color:var(--yellow)}.stat-card span{font-size:10px;color:var(--muted)}.stat-card strong{display:block;font-size:25px;margin:8px 0 3px}.stat-card small{font-size:9px;color:#91a0aa}
+.content-grid{display:grid;grid-template-columns:1.65fr .75fr;gap:14px}.panel{overflow:hidden}.panel-head{padding:15px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:15px}.panel-head h2,.page-card h2{font-size:14px;margin:0 0 5px}.panel-head p,.page-card p{font-size:10px;color:var(--muted);margin:0}.legend{display:flex;gap:12px;align-items:center;font-size:9px;color:#637381}.legend span{white-space:nowrap}.legend-dot{margin-right:5px}.map-panel{min-height:580px}.map-panel #map{height:515px}.activity-panel{padding-bottom:18px}.progress-list{padding:17px 18px 5px}.progress-list>div{margin-bottom:15px}.progress-list>div>div:first-child{display:flex;justify-content:space-between;font-size:10px;margin-bottom:7px}.progress-list b{font-size:10px}.progress{height:7px;background:#edf1f3;border-radius:20px;overflow:hidden}.progress i{display:block;height:100%;border-radius:20px}.activity-panel hr{border:0;border-top:1px solid var(--border);margin:12px 18px 18px}.activity-panel>h2{font-size:12px;margin:0 18px 14px}.activity{display:flex;gap:10px;padding:10px 18px}.activity-icon{width:25px;height:25px;border-radius:50%;background:#eef6f1;color:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;flex:0 0 25px}.activity b{display:block;font-size:10px}.activity small{display:block;color:#8997a2;font-size:8px;margin-top:4px}
+.page-card{padding:20px}.page-card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.primary{border:0;background:var(--green);color:#fff;border-radius:7px;padding:9px 13px;font:600 10px Inter;cursor:pointer;text-decoration:none;display:inline-block}.primary:hover{background:#26764e}.link-btn{margin-top:20px}.search{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:7px;margin-bottom:13px;font:400 11px Inter}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:760px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #edf1f3;font-size:10px}th{font-size:9px;text-transform:uppercase;letter-spacing:.3px;color:#6b7c88;background:#f8fafb}.pill{display:inline-block;padding:4px 8px;border-radius:20px;font-size:8px;font-weight:700}.pill.completed{background:#e8f5ee;color:#27744e}.pill.ongoing{background:#eaf3fb;color:#256aa7}.pill.new{background:#fff5df;color:#996d0b}
+.database-card{min-height:300px}.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.report-item{border:1px solid var(--border);border-radius:8px;padding:16px}.report-item b{display:block;font-size:12px}.report-item span{display:block;color:var(--muted);font-size:9px;margin:7px 0 14px}.report-item button{border:1px solid var(--border);background:#fff;border-radius:6px;padding:7px 9px;font:500 9px Inter;cursor:pointer}
+.personnel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:18px}.person-card{border:1px solid var(--border);border-radius:9px;overflow:hidden;background:#fff}.person-photo{height:170px;background:linear-gradient(135deg,#e8f1f5,#d9e7ee);display:flex;align-items:center;justify-content:center;color:#6d8796;font-weight:700;font-size:12px}.person-photo img{width:100%;height:100%;object-fit:cover}.person-info{padding:13px}.person-info b{font-size:11px;display:block}.person-info span{font-size:9px;color:var(--muted);display:block;margin-top:5px}
+.settings-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.settings-list label{font-size:10px;font-weight:600}.settings-list input{display:block;width:100%;margin-top:6px;border:1px solid var(--border);border-radius:7px;padding:10px;font:400 10px Inter;background:#f7f9fa}.notice{margin-top:18px;padding:12px;border-radius:7px;background:#eef6f1;color:#3e6250;font-size:10px}
+@media(max-width:1050px){.sidebar{width:215px}.main{margin-left:215px}.content-grid{grid-template-columns:1fr}.personnel-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:750px){.sidebar{position:static;width:100%;height:auto}.main{margin-left:0}.nav{display:grid;grid-template-columns:repeat(2,1fr)}.summary-grid,.stats-grid,.report-grid,.settings-list,.personnel-grid{grid-template-columns:1fr}.topbar{height:auto;gap:15px;align-items:flex-start}.header-right{display:none}.page{padding:14px}.brand{justify-content:center}}
+
+/* Major revision: simplified ALMED sidebar */
+.sidebar{
+  width:250px;
+  background:linear-gradient(180deg,#071f3b 0%,#0b3158 48%,#104c76 100%);
+}
+.revised-brand{
+  display:block;
+  text-align:center;
+  padding:4px 8px 22px;
+}
+.logo-large{
+  width:112px;height:112px;margin:0 auto 12px;border-radius:50%;
+  background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,.22);
+}
+.logo-large img{width:100%;height:100%;object-fit:contain}
+.logo-large span{display:none;color:#123b5d;font-weight:800;font-size:18px}
+.brand-name{
+  color:#fff;font-size:12px;font-weight:700;line-height:1.35;
+  text-transform:uppercase;letter-spacing:.2px;
+}
+.nav-group{display:block}
+.nav-parent{width:100%}
+.chevron{margin-left:auto;font-size:13px;transition:transform .2s}
+.submenu{display:none;padding:2px 0 4px 28px}
+.submenu.open{display:block}
+.sub-item{
+  width:100%;border:0;background:transparent;color:#bcd0df;text-align:left;
+  padding:9px 8px;border-radius:7px;display:flex;gap:8px;align-items:center;
+  font:500 10px Inter;cursor:pointer;line-height:1.25;
+}
+.sub-item:hover,.sub-item.active{background:rgba(255,255,255,.09);color:#fff}
+.sub-icon{width:15px;text-align:center}
+.dashboard-intro{display:flex;justify-content:space-between;align-items:center;margin:0 0 14px}
+.dashboard-intro h2{font-size:18px;margin:0 0 4px}
+.dashboard-intro p{font-size:10px;color:var(--muted);margin:0}
+.request-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.enlarged-map{min-height:350px}
+.enlarged-map #map{height:290px}
+.dashboard-lower{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.integration-panel{min-height:230px}
+.activity-panel{padding-bottom:10px}
+.activity-panel .panel-head{margin-bottom:4px}
+.activity-list{padding-bottom:8px}
+@media(max-width:900px){
+  .request-grid,.dashboard-lower{grid-template-columns:1fr}
+}
+
+.request-filter{
+  width:100%;text-align:left;background:#fff;font-family:Inter;cursor:pointer;
+  transition:transform .15s,box-shadow .15s,border-color .15s;
+}
+.request-filter:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(18,59,93,.10);border-color:#b8c9d5}
+.request-filter.selected{box-shadow:0 0 0 2px rgba(18,59,93,.16);border-color:#123b5d}
+.map-filter-note{font-size:9px;color:#5d7280;margin-top:4px}
+
+/* Revision 5: dashboard arrangement based on the provided reference image */
+.dashboard-main-grid{
+  display:grid;
+  grid-template-columns:minmax(0, 2fr) minmax(320px, 1.05fr);
+  gap:16px;
+  align-items:stretch;
+}
+.dashboard-main-grid .enlarged-map{
+  min-height:0;
+  height:620px;
+}
+.dashboard-main-grid .enlarged-map #map{
+  height:calc(100% - 78px);
+  min-height:500px;
+}
+.dashboard-side-column{
+  display:grid;
+  grid-template-rows:auto 1fr;
+  gap:16px;
+  min-width:0;
+}
+.dashboard-side-column .integration-panel{
+  min-height:245px;
+}
+.dashboard-side-column .activity-panel{
+  min-height:0;
+}
+.dashboard-side-column .activity-list{
+  padding-bottom:8px;
+}
+.dashboard-side-column .activity{
+  padding:12px 0;
+}
+@media(max-width:1050px){
+  .dashboard-main-grid{
+    grid-template-columns:1fr;
+  }
+  .dashboard-main-grid .enlarged-map{
+    height:500px;
+  }
+  .dashboard-main-grid .enlarged-map #map{
+    height:calc(100% - 78px);
+    min-height:380px;
+  }
+}
+
+/* Revision 6 */
+.agency-name{
+  margin-top:5px;
+  color:rgba(210,224,236,.78);
+  font-size:9px;
+  font-weight:500;
+  line-height:1.3;
+}
+.database-launcher{
+  min-height:210px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:26px;
+}
+.database-launcher .database-icon{
+  width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(31,123,95,.10);
+  color:#1f7b5f;font-size:25px;font-weight:700;
+  flex:0 0 auto;
+}
+.database-launcher h2{margin:0 0 6px}
+.database-launcher p{margin:0 0 16px;color:var(--muted);font-size:11px}
+.primary-button{
+  display:inline-flex;align-items:center;
+  padding:10px 14px;border-radius:7px;
+  background:#1f7b5f;color:#fff;text-decoration:none;
+  font-size:11px;font-weight:700;
+}
+.primary-button:hover{filter:brightness(.95)}
+
+/* Revision 8 - Uniform formal personnel portraits */
+.personnel-grid{grid-template-columns:repeat(4,1fr)}
+.person-photo{
+  height:250px;
+  background:#eef2f5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.person-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+  display:block;
+}
+@media(max-width:1200px){.personnel-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.personnel-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.personnel-grid{grid-template-columns:1fr}}
+/* Revision 9 - Personnel portraits and whereabouts */
+.personnel-grid{grid-template-columns:repeat(4,minmax(150px,1fr));gap:14px}
+.person-photo{
+  width:170px;
+  height:205px;
+  margin:0 auto;
+  background:#eef2f5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  cursor:pointer;
+  border-radius:8px;
+}
+.person-photo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center top;
+  display:block;
+}
+.person-card{cursor:pointer}
+.person-card:hover .person-photo{box-shadow:0 0 0 2px rgba(31,123,95,.25)}
+.person-info{text-align:center}
+.person-info b,.person-info span{display:block}
+.whereabouts-bar{display:flex;justify-content:flex-end;margin:0 0 14px}
+.whereabouts-button{display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border:0;border-radius:7px;background:#1f7b5f;color:#fff;font-weight:700;font-size:11px;cursor:pointer;text-decoration:none}
+.whereabouts-button:hover{filter:brightness(.96)}
+.schedule-modal-backdrop{position:fixed;inset:0;background:rgba(8,27,43,.48);display:none;align-items:center;justify-content:center;z-index:5000;padding:20px}
+.schedule-modal-backdrop.open{display:flex}
+.schedule-modal{width:min(620px,95vw);max-height:82vh;overflow:auto;background:#fff;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.schedule-modal-head{display:flex;justify-content:space-between;gap:12px;padding:18px 20px;border-bottom:1px solid #e7edf1}
+.schedule-modal-head h3{margin:0;font-size:16px;color:#123b5d}
+.schedule-modal-head small{display:block;color:#71818d;margin-top:4px}
+.schedule-close{border:0;background:#eef2f5;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:17px}
+.schedule-modal-body{padding:18px 20px}
+.schedule-status{font-size:11px;color:#71818d;margin-bottom:12px}
+.schedule-row{display:grid;grid-template-columns:minmax(130px,.8fr) minmax(0,1.6fr);gap:12px;padding:10px 0;border-bottom:1px solid #edf1f3}
+.schedule-row b{font-size:11px;color:#123b5d}.schedule-row span{font-size:11px;color:#354b5a;white-space:pre-wrap}
+.schedule-empty{padding:20px;text-align:center;color:#71818d;font-size:12px;background:#f7f9fa;border-radius:8px}
+@media(max-width:1100px){.personnel-grid{grid-template-columns:repeat(3,minmax(150px,1fr))}}
+@media(max-width:760px){.personnel-grid{grid-template-columns:repeat(2,minmax(150px,1fr))}}
+@media(max-width:500px){.personnel-grid{grid-template-columns:1fr}}
+
+/* Revision 10 - Personnel portrait presentation */
+.personnel-grid{
+  grid-template-columns:repeat(3,minmax(190px,1fr));
+  gap:16px;
+}
+.person-photo{
+  width:155px;
+  height:195px;
+  margin:0 auto;
+  background:#eef2f5;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  overflow:hidden;
+  cursor:pointer;
+  border-radius:8px;
+}
+.person-photo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center top;
+  display:block;
+}
+@media(max-width:1100px){.personnel-grid{grid-template-columns:repeat(3,minmax(170px,1fr))}}
+@media(max-width:800px){.personnel-grid{grid-template-columns:repeat(2,minmax(150px,1fr))}}
+@media(max-width:520px){.personnel-grid{grid-template-columns:1fr}}
+
+/* Revision 11 - Large Personnel Portraits */
+.personnel-grid{
+  grid-template-columns:repeat(3,minmax(210px,1fr));
+  gap:16px;
+}
+.person-photo{
+  width:100%;
+  height:280px;
+  margin:0;
+  background:#eef2f5;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  overflow:hidden;
+  cursor:pointer;
+  border-radius:8px 8px 0 0;
+}
+.person-photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  display:block;
+}
+@media(max-width:1100px){.personnel-grid{grid-template-columns:repeat(3,minmax(180px,1fr))}}
+@media(max-width:800px){.personnel-grid{grid-template-columns:repeat(2,minmax(150px,1fr))}}
+@media(max-width:520px){.personnel-grid{grid-template-columns:1fr}}
+
+/* Revision 12 - Four Personnel Photos Per Row */
+.personnel-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+}
+.person-photo{
+  height:265px;
+}
+@media(max-width:1100px){.personnel-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:800px){.personnel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.personnel-grid{grid-template-columns:1fr}}
+
+/* Revision 13 - Five Personnel Photos Per Row */
+.personnel-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px;
+}
+.person-photo{
+  height:245px;
+}
+@media(max-width:1200px){.personnel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:950px){.personnel-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.personnel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.personnel-grid{grid-template-columns:1fr}}
+
+/* Revision 14 - Personnel click opens a live 2026 calendar */
+.schedule-modal{
+  width:min(980px,96vw);
+  max-height:90vh;
+}
+.schedule-modal-body{
+  padding:14px 16px 18px;
+}
+.calendar-live-note{
+  font-size:11px;
+  color:#71818d;
+  margin-bottom:12px;
+}
+.person-calendar-month{
+  border:1px solid #dfe7eb;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:14px;
+  background:#fff;
+}
+.calendar-month-title{
+  padding:10px 12px;
+  font-size:14px;
+  font-weight:800;
+  color:#123b5d;
+  background:#f4f7f9;
+  border-bottom:1px solid #dfe7eb;
+}
+.calendar-weekdays,
+.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+}
+.calendar-weekdays>div{
+  padding:7px 5px;
+  text-align:center;
+  font-size:9px;
+  font-weight:800;
+  color:#627481;
+  background:#fafcfd;
+  border-right:1px solid #e7edf1;
+  border-bottom:1px solid #dfe7eb;
+}
+.calendar-weekdays>div:last-child{border-right:0}
+.calendar-day{
+  min-height:92px;
+  padding:6px;
+  border-right:1px solid #e7edf1;
+  border-bottom:1px solid #e7edf1;
+  background:#fff;
+}
+.calendar-day:nth-child(7n){border-right:0}
+.calendar-blank{background:#f7f9fa}
+.calendar-date{
+  font-size:10px;
+  font-weight:800;
+  color:#123b5d;
+  margin-bottom:5px;
+}
+.calendar-free{
+  font-size:8px;
+  color:#a0adb5;
+  line-height:1.25;
+}
+.calendar-event{
+  font-size:8.5px;
+  line-height:1.28;
+  color:#243c4d;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  background:#eef6f2;
+  border-left:3px solid #2f855a;
+  border-radius:4px;
+  padding:5px;
+}
+.calendar-day.has-event{
+  background:#fbfefc;
+}
+.calendar-source-link{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:4px;
+}
+@media(max-width:700px){
+  .calendar-day{min-height:80px;padding:4px}
+  .calendar-event{font-size:7.5px}
+  .calendar-free{font-size:7px}
+}
+
+/* Live Google Sheets refresh controls */
+.calendar-live-note{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.calendar-live-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.schedule-refresh-note{font-size:10px;color:#647887}
+.schedule-refresh-note.error{color:#b45309}
+.schedule-refresh-button{border:1px solid #cdd8df;background:#fff;color:#123b5d;border-radius:6px;padding:5px 9px;font-size:10px;font-weight:700;cursor:pointer}
+.schedule-refresh-button:hover{background:#f2f6f8}
+
+/* Revision 16 - enhanced maroon header */
+@media(max-width:750px){
+  .topbar h1{font-size:19px}
+  .topbar p{font-size:10px}
+}
+
+/* Revision 17 - fixed global header */
+.topbar{
+  position:fixed;
+  top:0;
+  left:250px;
+  right:0;
+  z-index:1000;
+}
+
+/* Keep all page content below the fixed header */
+.main{
+  padding-top:96px;
+}
+
+/* Maintain the fixed header on smaller screens */
+@media(max-width:900px){
+  .topbar{
+    left:0;
+  }
+}
+
+/* Revision 18 - Global header shared by every section/tab */
+.topbar{
+  position:fixed !important;
+  top:0;
+  left:250px;
+  right:0;
+  z-index:9999;
+  width:auto;
+}
+
+/* Keep the same header visible while Dashboard, Email Management,
+   Database, Reports, Personnel, and Settings are displayed. */
+.main{
+  padding-top:96px;
+}
+
+@media(max-width:900px){
+  .topbar{
+    left:0;
+  }
+}
+
+/* Revision 19 - Permanent global heading */
+.topbar{
+  position:fixed !important;
+  top:0 !important;
+  left:250px !important;
+  right:0 !important;
+  z-index:9999 !important;
+  width:auto !important;
+  height:96px !important;
+  box-sizing:border-box;
+}
+
+.main{
+  padding-top:96px !important;
+}
+
+/* The header is one shared component, so it does not change
+   when switching Dashboard, Email Management, Database, Reports,
+   Personnel, or Settings. */
+@media(max-width:900px){
+  .topbar{
+    left:0 !important;
+  }
+}
+
+/* Revision 20 - consistent heading for Email Management and all sections */
+.section-title h2{
+  margin:0;
+  color:#fff;
+  font-size:24px;
+  font-weight:800;
+  letter-spacing:.25px;
+}
+.section-title p{
+  margin:6px 0 0;
+  color:#f3dfe2;
+  font-size:11px;
+  letter-spacing:.15px;
+}
+
+/* Revision 22 - ALMED green and yellow accents */
+
+/* Top fixed website header: subtle green/yellow accent line */
+.topbar{
+  border-bottom:0 !important;
+  position:fixed !important;
+  overflow:visible;
+}
+.topbar::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-3px;
+  height:4px;
+  background:linear-gradient(90deg,#2e8b57 0%,#2e8b57 48%,#e0b52a 52%,#e0b52a 100%);
+}
+
+/* Sidebar: thin green/yellow accent along its right edge */
+.sidebar{
+  position:fixed;
+  overflow:visible;
+}
+.sidebar::after{
+  content:"";
+  position:absolute;
+  top:0;
+  right:-3px;
+  width:3px;
+  height:100%;
+  background:linear-gradient(180deg,#2e8b57 0%,#2e8b57 50%,#e0b52a 50%,#e0b52a 100%);
+}
+
+/* Small ALMED-inspired accent above sidebar navigation */
+.sidebar .nav::before{
+  content:"";
+  display:block;
+  height:3px;
+  margin:4px 18px 14px;
+  border-radius:3px;
+  background:linear-gradient(90deg,#2e8b57 0 50%,#e0b52a 50% 100%);
+  opacity:.95;
+}
+
+/* =========================================================
+   REVISION 23 — Enhanced ALMED-inspired visual treatment
+   Stronger maroon / green / yellow gradients
+   ========================================================= */
+
+/* Main fixed header — richer, more dimensional gradient */
+.topbar{
+  background:
+    radial-gradient(circle at 88% 15%, rgba(224,181,42,.22), transparent 30%),
+    linear-gradient(115deg, #430711 0%, #650d19 30%, #851827 62%, #a72d3d 100%) !important;
+  border-bottom:0 !important;
+  box-shadow:
+    0 5px 18px rgba(57,7,15,.30),
+    inset 0 1px 0 rgba(255,255,255,.10) !important;
+}
+
+/* Stronger green + yellow header accent */
+.topbar::after{
+  height:6px !important;
+  bottom:-4px !important;
+  background:
+    linear-gradient(90deg,
+      #16834b 0%,
+      #2fa866 27%,
+      #75b82c 43%,
+      #e0b52a 58%,
+      #f2c94c 76%,
+      #d99d17 100%) !important;
+  box-shadow:0 2px 7px rgba(224,181,42,.38);
+}
+
+/* Sidebar — stronger multi-color gradient while retaining dark blue identity */
+.sidebar{
+  background:
+    radial-gradient(circle at 20% 4%, rgba(46,139,87,.22), transparent 24%),
+    radial-gradient(circle at 90% 90%, rgba(224,181,42,.12), transparent 30%),
+    linear-gradient(180deg, #071e35 0%, #0a2940 42%, #0b3542 72%, #092238 100%) !important;
+  box-shadow:8px 0 24px rgba(4,18,31,.20);
+}
+
+/* Sidebar green/yellow accent becomes more visible */
+.sidebar::after{
+  right:-5px !important;
+  width:5px !important;
+  background:
+    linear-gradient(180deg,
+      #16834b 0%,
+      #2fa866 28%,
+      #8dbb2f 45%,
+      #e0b52a 60%,
+      #f2c94c 78%,
+      #c99012 100%) !important;
+  box-shadow:2px 0 8px rgba(224,181,42,.28);
+}
+
+/* Navigation accent — richer gradient */
+.sidebar .nav::before{
+  height:4px !important;
+  margin:4px 18px 16px !important;
+  background:
+    linear-gradient(90deg,
+      #16834b 0%,
+      #39a96b 35%,
+      #e0b52a 68%,
+      #f1c84a 100%) !important;
+  box-shadow:0 1px 5px rgba(224,181,42,.25);
+}
+
+/* Sidebar logo area gets a subtle gradient halo */
+.sidebar .brand,
+.sidebar .logo,
+.sidebar .brand-logo{
+  position:relative;
+}
+
+/* Navigation items — polished hover/active treatment */
+.sidebar .nav a,
+.sidebar .nav button{
+  transition:all .2s ease;
+}
+
+.sidebar .nav a:hover,
+.sidebar .nav button:hover{
+  background:linear-gradient(90deg, rgba(46,139,87,.28), rgba(224,181,42,.12)) !important;
+  border-left-color:#e0b52a !important;
+}
+
+.sidebar .nav a.active,
+.sidebar .nav button.active{
+  background:linear-gradient(90deg, rgba(46,139,87,.42), rgba(224,181,42,.20)) !important;
+  box-shadow:inset 4px 0 0 #e0b52a, 0 3px 10px rgba(0,0,0,.10);
+}
+
+/* Page background — subtle gradient for a cleaner, premium feel */
+body{
+  background:
+    radial-gradient(circle at 92% 8%, rgba(224,181,42,.055), transparent 22%),
+    linear-gradient(135deg, #f5f7f8 0%, #eef3f2 55%, #f8f9f7 100%) !important;
+}
+
+/* Cards get a restrained gradient highlight */
+.card,
+.panel,
+.dashboard-card,
+.stat-card{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,1) 0%, rgba(250,252,250,1) 100%);
+  box-shadow:0 5px 18px rgba(9,34,48,.07);
+}
+
+/* Buttons use the same green-to-yellow accent language */
+button.primary,
+.btn-primary,
+.add-btn{
+  background:linear-gradient(135deg,#247d4d 0%,#2e9360 55%,#6eaa32 100%) !important;
+  border:0 !important;
+  box-shadow:0 4px 10px rgba(34,118,75,.20);
+}
+
+button.primary:hover,
+.btn-primary:hover,
+.add-btn:hover{
+  filter:brightness(1.06);
+  transform:translateY(-1px);
+}
+
+/* Revision 24 — restore original sidebar color and keep only the corner accent */
+
+/* Cleaner dark-blue sidebar, closer to the earlier design */
+.sidebar{
+  background:linear-gradient(180deg,#071e35 0%,#0a2940 55%,#0b3542 100%) !important;
+}
+
+/* Keep the green/yellow accent only where the sidebar meets the maroon header */
+.sidebar::after{
+  right:-5px !important;
+  width:5px !important;
+  height:100% !important;
+  background:linear-gradient(180deg,
+    #16834b 0%,
+    #2fa866 28%,
+    #8dbb2f 45%,
+    #e0b52a 60%,
+    #f2c94c 78%,
+    #c99012 100%) !important;
+}
+
+/* Remove the green/yellow line above the sidebar navigation */
+.sidebar .nav::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Keep navigation clean and close to the original appearance */
+.sidebar .nav a:hover,
+.sidebar .nav button:hover{
+  background:rgba(46,139,87,.18) !important;
+}
+
+.sidebar .nav a.active,
+.sidebar .nav button.active{
+  background:rgba(46,139,87,.28) !important;
+  box-shadow:inset 4px 0 0 #e0b52a !important;
+}
+
+/* =========================================================
+   REVISION 25 — User-approved color direction
+   Sidebar: dark blue -> lighter blue
+   Header: maroon -> lighter maroon
+   Green/yellow ONLY at the sidebar/header corner boundary
+   ========================================================= */
+
+/* Clean blue sidebar gradient — no green/yellow tint */
+.sidebar{
+  background:linear-gradient(
+    180deg,
+    #061a30 0%,
+    #0a2946 48%,
+    #0d4164 100%
+  ) !important;
+  box-shadow:8px 0 24px rgba(4,18,31,.18);
+}
+
+/* Keep only the green/yellow boundary accent */
+.sidebar::after{
+  right:-5px !important;
+  width:5px !important;
+  top:0 !important;
+  height:100% !important;
+  background:linear-gradient(
+    180deg,
+    #238b57 0%,
+    #2fa866 35%,
+    #e0b52a 50%,
+    #f2c94c 68%,
+    #d49b17 100%
+  ) !important;
+  box-shadow:2px 0 8px rgba(224,181,42,.25);
+}
+
+/* Clean maroon header gradient — no green/yellow tint */
+.topbar{
+  background:linear-gradient(
+    115deg,
+    #4b0812 0%,
+    #680d19 38%,
+    #861b29 70%,
+    #a52b3a 100%
+  ) !important;
+  border-bottom:0 !important;
+  box-shadow:
+    0 5px 18px rgba(57,7,15,.28),
+    inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+/* The ONLY green/yellow treatment on the header is the
+   small corner/boundary line requested by the user. */
+.topbar::after{
+  height:5px !important;
+  bottom:-4px !important;
+  left:0 !important;
+  right:auto !important;
+  width:250px !important;
+  background:linear-gradient(
+    90deg,
+    #238b57 0%,
+    #2fa866 50%,
+    #e0b52a 50%,
+    #f2c94c 100%
+  ) !important;
+  box-shadow:0 2px 6px rgba(224,181,42,.25);
+}
+
+/* Remove any extra green/yellow navigation accent */
+.sidebar .nav::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Keep navigation clean against the blue gradient */
+.sidebar .nav a:hover,
+.sidebar .nav button:hover{
+  background:rgba(255,255,255,.08) !important;
+}
+
+.sidebar .nav a.active,
+.sidebar .nav button.active{
+  background:rgba(255,255,255,.13) !important;
+  box-shadow:inset 4px 0 0 rgba(255,255,255,.78) !important;
+}
+
+/* =========================================================
+   REVISION 26 — Softer gradients + continuous green/yellow accent
+   ========================================================= */
+
+/* Softer, lighter blue sidebar */
+.sidebar{
+  background:linear-gradient(
+    180deg,
+    #123453 0%,
+    #1d4f72 50%,
+    #2d6788 100%
+  ) !important;
+  box-shadow:6px 0 18px rgba(6,30,48,.12);
+}
+
+/* Softer, lighter maroon header */
+.topbar{
+  background:linear-gradient(
+    115deg,
+    #741c29 0%,
+    #8f2937 45%,
+    #a83b49 100%
+  ) !important;
+  box-shadow:
+    0 4px 14px rgba(75,15,25,.18),
+    inset 0 1px 0 rgba(255,255,255,.12) !important;
+}
+
+/* One continuous green/yellow accent running across the
+   entire sidebar/header junction */
+.topbar::after{
+  left:-250px !important;
+  right:0 !important;
+  width:auto !important;
+  height:5px !important;
+  bottom:-4px !important;
+  background:linear-gradient(
+    90deg,
+    #2b8c58 0%,
+    #42a96d 25%,
+    #75b82c 42%,
+    #e0b52a 58%,
+    #f1c94b 75%,
+    #d8a21c 100%
+  ) !important;
+  box-shadow:0 2px 7px rgba(224,181,42,.22);
+}
+
+/* Hide the separate sidebar edge accent so the same continuous
+   line is visually clean and uninterrupted */
+.sidebar::after{
+  display:none !important;
+  content:none !important;
+}
+
+/* Keep sidebar navigation calm against the lighter blue */
+.sidebar .nav a:hover,
+.sidebar .nav button:hover{
+  background:rgba(255,255,255,.10) !important;
+}
+
+.sidebar .nav a.active,
+.sidebar .nav button.active{
+  background:rgba(255,255,255,.16) !important;
+  box-shadow:inset 4px 0 0 rgba(255,255,255,.82) !important;
+}
+
+/* =========================================================
+   REVISION 27 — L-shaped green/yellow corner accent
+   Matching the user's reference image:
+   vertical accent on the sidebar edge + horizontal accent
+   underneath the maroon header, meeting at the corner.
+   ========================================================= */
+
+/* Restore the vertical accent on the right edge of the sidebar */
+.sidebar::after{
+  display:block !important;
+  content:"" !important;
+  position:absolute !important;
+  top:0 !important;
+  right:-5px !important;
+  width:5px !important;
+  height:100% !important;
+  background:linear-gradient(
+    180deg,
+    #238b57 0%,
+    #238b57 35%,
+    #e0b52a 68%,
+    #e0b52a 100%
+  ) !important;
+  box-shadow:2px 0 5px rgba(0,0,0,.08);
+}
+
+/* Horizontal accent under the header.
+   It begins at the sidebar boundary and runs across the header. */
+.topbar::after{
+  display:block !important;
+  content:"" !important;
+  position:absolute !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:-5px !important;
+  width:auto !important;
+  height:5px !important;
+  background:linear-gradient(
+    90deg,
+    #238b57 0%,
+    #238b57 32%,
+    #e0b52a 58%,
+    #e0b52a 100%
+  ) !important;
+  box-shadow:0 2px 5px rgba(0,0,0,.08);
+}
+
+/* Keep the two accents visually clean at the sidebar/header corner */
+.sidebar,
+.topbar{
+  z-index:1000;
+}
+
+/* No extra accent line inside the sidebar */
+.sidebar .nav::before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Revision 29 — Three Dashboard Summary Panels */
+.request-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:14px !important;
+}
+
+@media(max-width:1100px){
+  .request-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* =========================================================
+   REVISION 31 — Map-style status representation
+   Replace simple dots in Summary Cards with miniature map pins.
+   Colors intentionally match the Dashboard map legend.
+   ========================================================= */
+
+.status-map-marker{
+  width:24px;
+  height:24px;
+  min-width:24px;
+  border-radius:50% 50% 50% 0;
+  display:block;
+  position:relative;
+  transform:rotate(-45deg);
+  margin:0 12px 0 3px;
+  box-sizing:border-box;
+  box-shadow:0 2px 5px rgba(20,45,60,.18);
+}
+
+.status-map-marker::after{
+  content:"";
+  position:absolute;
+  width:8px;
+  height:8px;
+  left:7px;
+  top:7px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 0 1px rgba(0,0,0,.06);
+}
+
+/* Integrated — same green representation used on the map */
+.completed-marker{
+  background:#2e8b57;
+}
+
+/* Ongoing — same blue representation used on the map */
+.ongoing-marker{
+  background:#2f83c9;
+}
+
+/* Pending / Not Integrated — same yellow representation used on the map */
+.pending-marker{
+  background:#dca326;
+}
+
+/* Keep the marker visually aligned with the card content */
+.mini-card{
+  align-items:center;
+}
+
+.mini-card > .status-map-marker{
+  flex:0 0 24px;
+}
+
+/* Revision 35 — Live NPAAAD / SAFDZ Summary Card */
+.section-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.section-title-row .section-title{margin-bottom:0}
+.live-source-badge{font-size:8px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:4px 7px;border-radius:20px;background:#e8f5ee;color:#27744e;border:1px solid #cfe9da}
+.live-source-badge.offline{background:#fff2e5;color:#9a6414;border-color:#f0d5ae}
+.npaaad-summary-card .mini-card{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.npaaad-summary-card .mini-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(17,40,60,.10)}
+.npaaad-summary-card .mini-card:focus-visible{outline:2px solid #2e8b57;outline-offset:2px}
+.live-update-note{font-size:8px;color:#81909a;margin:10px 2px 0;min-height:12px}
+
+/* Revision 39 — Editable ALRMS Activities and Schedules calendar */
+.activity-panel{padding-bottom:0}
+.alrms-calendar-wrap{padding:10px 12px 12px}
+.alrms-calendar-toolbar{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;gap:7px;margin-bottom:7px}
+.calendar-nav-btn{width:34px;height:32px;border:1px solid #d4dfe5;background:#fff;color:#123b5d;border-radius:7px;font-size:22px;line-height:1;cursor:pointer}
+.calendar-nav-btn:hover{background:#f3f7f9}
+.alrms-calendar-title{text-align:center;font-size:13px;font-weight:800;color:#123b5d}
+.alrms-calendar-weekdays,.alrms-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.alrms-calendar-weekdays span{padding:5px 2px;text-align:center;font-size:7.5px;font-weight:800;color:#71818d;border-bottom:1px solid #dfe7eb}
+.alrms-calendar-grid{border-left:1px solid #e4ebef;border-top:1px solid #e4ebef}
+.alrms-cal-day{position:relative;min-height:67px;padding:4px;background:#fff;border-right:1px solid #e4ebef;border-bottom:1px solid #e4ebef;cursor:pointer;overflow:hidden}
+.alrms-cal-day:hover{background:#f8fbfc}
+.alrms-cal-day.other-month{background:#f7f9fa;color:#aeb8bf}
+.alrms-cal-day.today{box-shadow:inset 0 0 0 2px #2e8b57}
+.alrms-cal-day.holiday{background:#fff8e8}
+.alrms-cal-date{font-size:9px;font-weight:800;color:#23475e;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
+.other-month .alrms-cal-date{color:#a7b1b8}
+.alrms-cal-holiday{font-size:6.5px;line-height:1.15;color:#9a6414;font-weight:800;margin-bottom:3px;white-space:normal;overflow-wrap:anywhere}
+.alrms-cal-event{font-size:6.7px;line-height:1.18;color:#24513b;background:#eef6f2;border-left:2px solid #2f855a;border-radius:3px;padding:3px;margin-top:2px;white-space:normal;overflow:hidden;max-height:29px}
+.alrms-cal-more{font-size:6px;color:#5d7180;margin-top:2px}
+.alrms-calendar-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:7px;font-size:7px;color:#71818d}
+.calendar-key{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:3px;vertical-align:-1px}
+.holiday-key{background:#f1c75b}.schedule-key{background:#2f855a}.calendar-help{margin-left:auto}
+.alrms-calendar-editor{width:min(620px,94vw);max-height:90vh}
+.alrms-editor-body{padding:14px 16px 17px;overflow:auto}
+.alrms-day-events{margin-bottom:12px}
+.alrms-event-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border:1px solid #dfe7eb;border-radius:7px;margin-bottom:6px;background:#fafcfd}
+.alrms-event-row .event-copy{flex:1;min-width:0}.alrms-event-row b{display:block;font-size:9px;color:#243c4d}.alrms-event-row small{display:block;font-size:7.5px;color:#71818d;margin-top:2px}
+.alrms-event-row button{border:1px solid #d2dde3;background:#fff;border-radius:5px;padding:5px 7px;font-size:8px;cursor:pointer;color:#35566c}
+.alrms-event-empty{font-size:8px;color:#8b99a3;padding:3px 0 7px}
+.alrms-schedule-form{border-top:1px solid #e1e8ec;padding-top:12px}
+.alrms-schedule-form label{display:block;font-size:8px;font-weight:800;color:#526976;margin-bottom:9px}
+.alrms-schedule-form input{display:block;width:100%;box-sizing:border-box;margin-top:4px;border:1px solid #ccd8df;border-radius:6px;padding:8px 9px;font:inherit;font-size:10px;color:#263f50;background:#fff}
+.alrms-form-row{display:grid;grid-template-columns:130px 1fr;gap:10px}
+.alrms-form-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:4px}
+.calendar-secondary-btn,.calendar-primary-btn{border-radius:6px;padding:7px 10px;font-size:9px;font-weight:800;cursor:pointer}
+.calendar-secondary-btn{border:1px solid #ccd8df;background:#fff;color:#4d6473}.calendar-primary-btn{border:1px solid #245d80;background:#245d80;color:#fff}
+.alrms-storage-note{font-size:7px;color:#8b99a3;margin-top:10px}
+@media(max-width:700px){
+  .alrms-cal-day{min-height:61px;padding:3px}.alrms-cal-holiday{font-size:6px}.alrms-cal-event{font-size:6.2px}.calendar-help{width:100%;margin-left:0}
+  .alrms-form-row{grid-template-columns:1fr}
+}
+
+/* Revision 41 - Dashboard panel proportions matched to reference image */
+.dashboard-main-grid{
+  grid-template-columns:minmax(0, 1.65fr) minmax(320px, 1fr);
+  gap:16px;
+}
+.dashboard-main-grid .enlarged-map{
+  height:600px;
+}
+.dashboard-side-column{
+  grid-template-rows:205px minmax(0, 1fr);
+  gap:12px;
+}
+.dashboard-side-column .integration-panel{
+  min-height:0;
+}
+.dashboard-side-column .activity-panel{
+  min-height:0;
+}
+@media(max-width:1050px){
+  .dashboard-main-grid{grid-template-columns:1fr;}
+  .dashboard-main-grid .enlarged-map{height:500px;}
+  .dashboard-side-column{grid-template-rows:auto auto;}
+}
+
+
+/* Revision 46 — match the Interactive Map height to the full right-side stack */
+@media(min-width:1051px){
+  .dashboard-main-grid{align-items:stretch;}
+  .dashboard-main-grid .enlarged-map{
+    height:auto;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+  }
+  .dashboard-main-grid .enlarged-map #map{
+    height:auto;
+    flex:1 1 auto;
+    min-height:0;
+  }
+}
+
+/* Revision 44 — 3D gradient Summary Cards inspired by the approved reference design */
+.request-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:14px !important;align-items:stretch}
+.request-grid > .section-card{
+  position:relative;overflow:hidden;border:0 !important;border-radius:12px !important;
+  min-height:132px;padding:13px 16px 9px !important;color:#fff;
+  box-shadow:0 7px 16px rgba(22,44,68,.18), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.request-grid > .section-card::after{
+  content:"";position:absolute;right:-14px;bottom:-28px;width:130px;height:130px;border-radius:28px;
+  background:rgba(255,255,255,.08);transform:rotate(-28deg);pointer-events:none;
+}
+.integration-summary-card{background:linear-gradient(135deg,#0d4f9b 0%,#176dc0 48%,#0b3f83 100%) !important}
+.npaaad-summary-card{background:linear-gradient(135deg,#146c45 0%,#21875a 50%,#0e5c3d 100%) !important}
+.eo79-summary-card{background:linear-gradient(135deg,#9b4a12 0%,#c06422 48%,#8c3d0c 100%) !important}
+.request-grid .section-title-row{position:relative;z-index:2;display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:10px;margin-bottom:9px}
+.request-grid .section-title{font-size:14px !important;line-height:1.25;color:#fff !important;margin:0 !important;font-weight:800}
+.summary-card-icon{width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:31px;font-weight:900;color:#fff;box-shadow:inset 0 1px 5px rgba(255,255,255,.12),0 4px 10px rgba(0,0,0,.13)}
+.request-grid .live-source-badge{background:rgba(255,255,255,.92) !important;color:#2b7650 !important;border:0 !important;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.request-grid .mini-grid{position:relative;z-index:2;gap:0 !important}
+.request-grid .mini-card{
+  min-height:50px;padding:4px 10px !important;border:0 !important;border-right:1px solid rgba(255,255,255,.38) !important;border-radius:0 !important;
+  background:transparent !important;color:#fff !important;justify-content:center;text-align:center;cursor:pointer;
+  transition:background .16s ease,transform .16s ease;
+}
+.request-grid .mini-card:last-child{border-right:0 !important}
+.request-grid .mini-card:hover{background:rgba(255,255,255,.08) !important;transform:translateY(-1px)}
+.request-grid .mini-card:focus-visible{outline:2px solid rgba(255,255,255,.9);outline-offset:-2px}
+.request-grid .mini-card small{font-size:9px;color:rgba(255,255,255,.92) !important;font-weight:700}
+.request-grid .mini-card strong{font-size:28px !important;line-height:1.05;color:#fff !important;margin-top:4px;text-shadow:0 1px 2px rgba(0,0,0,.16)}
+.request-grid .live-update-note{position:relative;z-index:2;font-size:8px;color:rgba(255,255,255,.9);margin:6px 28px 0 2px;min-height:10px}
+.summary-card-arrow{display:none !important}
+/* keep decorative map-pin classes from rendering if present elsewhere */
+.status-map-marker{display:none !important}
+@media(max-width:1100px){.request-grid{grid-template-columns:1fr !important}.request-grid > .section-card{min-height:145px}}
+
+/* Revision 48 — ensure Leaflet fills the full map panel on first load */
+@media(min-width:1051px){
+  .dashboard-main-grid .enlarged-map{
+    min-height:0 !important;
+    height:100% !important;
+  }
+  .dashboard-main-grid .enlarged-map .section-title-row{
+    flex:0 0 auto;
+  }
+  .dashboard-main-grid .enlarged-map #map{
+    width:100% !important;
+    height:auto !important;
+    flex:1 1 0 !important;
+    min-height:0 !important;
+  }
+}
+
+/* =========================================================
+   Reports page
+   ========================================================= */
+.reports-page{display:flex;flex-direction:column;gap:16px}
+.reports-intro-card{margin-bottom:0}
+.report-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.report-launch-card{position:relative;min-height:150px;border:1px solid rgba(20,52,91,.12);border-radius:16px;padding:20px;display:flex;align-items:center;gap:15px;text-align:left;color:#fff;cursor:pointer;overflow:hidden;box-shadow:0 10px 22px rgba(22,45,72,.12),inset 0 1px 0 rgba(255,255,255,.32);transition:transform .18s ease,box-shadow .18s ease}
+.report-launch-card:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(22,45,72,.18),inset 0 1px 0 rgba(255,255,255,.35)}
+.report-launch-card:focus-visible{outline:3px solid rgba(255,255,255,.8);outline-offset:-5px}
+.report-launch-card:after{content:"";position:absolute;right:-35px;bottom:-50px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.08)}
+.report-npaaad{background:linear-gradient(135deg,#174d8f 0%,#0e3a73 58%,#245ca1 100%)}
+.report-harmonization{background:linear-gradient(135deg,#1c8055 0%,#176441 58%,#2d8b62 100%)}
+.report-eo79{background:linear-gradient(135deg,#a34f18 0%,#7f3614 58%,#b45b20 100%)}
+.report-launch-icon{position:relative;z-index:1;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.26);display:grid;place-items:center;font-size:29px;flex:0 0 auto;box-shadow:inset 0 1px 2px rgba(255,255,255,.2)}
+.report-launch-body{position:relative;z-index:1;display:flex;flex-direction:column;min-width:0;gap:7px}
+.report-launch-body b{font-size:15px;line-height:1.25}
+.report-launch-body small{font-size:10px;line-height:1.45;color:rgba(255,255,255,.82)}
+.report-launch-arrow{position:relative;z-index:1;margin-left:auto;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);font-size:27px;flex:0 0 auto}
+.report-viewer{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 28px rgba(20,40,65,.08);overflow:hidden}
+.report-viewer-toolbar{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:18px 20px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fff,#f8fafc)}
+.report-viewer-toolbar h2{margin:0;font-size:18px;color:#12345b}.report-viewer-toolbar p{margin:5px 0 0;color:#738196;font-size:10px}.report-toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}.secondary-btn{border:1px solid var(--border);background:#fff;color:#173b63;border-radius:7px;padding:9px 12px;font:600 10px Inter;cursor:pointer}
+.report-document{padding:26px 28px 32px;color:#1c2d40;background:#fff}
+.report-doc-header{text-align:center;border-bottom:2px solid #173f6d;padding-bottom:16px;margin-bottom:20px}.report-doc-header .agency{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}.report-doc-header h1{font-size:20px;margin:7px 0;color:#123b67}.report-doc-header .doc-meta{font-size:9px;color:#6b7787}
+.report-status-section{margin:22px 0}.report-status-title{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:8px;color:#fff;font-size:12px;font-weight:700;margin-bottom:8px}.report-status-title.completed{background:#28794e}.report-status-title.processing{background:#2466a7}.report-status-title.pending{background:#c28c20}.report-status-title span{background:rgba(255,255,255,.17);padding:3px 7px;border-radius:10px;font-size:9px}
+.report-table-wrap{overflow-x:auto;border:1px solid #dce3ea;border-radius:7px}.report-table{width:100%;border-collapse:collapse;min-width:700px;font-size:9px}.report-table th{background:#f0f4f8;color:#183c62;text-align:left;font-size:8px;text-transform:uppercase;letter-spacing:.25px;padding:8px;border-bottom:1px solid #d7dfe7}.report-table td{padding:8px;border-bottom:1px solid #e8edf2;vertical-align:top;line-height:1.35}.report-table tr:last-child td{border-bottom:0}.report-empty{padding:14px;text-align:center;color:#7b8794;font-size:9px;background:#fafbfc}.report-loading,.report-error{padding:35px;text-align:center;color:#6b7787;font-size:11px}.report-error{color:#9b3b31}.report-footer{margin-top:22px;padding-top:10px;border-top:1px solid #dce3ea;font-size:8px;color:#7a8795;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media(max-width:1050px){.report-card-grid{grid-template-columns:1fr}.report-viewer-toolbar{align-items:flex-start;flex-direction:column}}
+@page{size:A4 portrait;margin:10mm}
+/* Revision 55: stronger status color accents throughout the printable report. */
+.report-status-section.completed{border-left:5px solid #28794e;padding-left:10px}.report-status-section.processing{border-left:5px solid #2466a7;padding-left:10px}.report-status-section.pending{border-left:5px solid #c28c20;padding-left:10px}
+.report-status-section.completed .report-table-wrap{border-color:rgba(40,121,78,.35)}.report-status-section.processing .report-table-wrap{border-color:rgba(36,102,167,.35)}.report-status-section.pending .report-table-wrap{border-color:rgba(194,140,32,.4)}
+.report-status-section.completed .report-table th{background:#edf8f1;color:#236b46;border-bottom:2px solid rgba(40,121,78,.3)}
+.report-status-section.processing .report-table th{background:#edf4fb;color:#205d96;border-bottom:2px solid rgba(36,102,167,.3)}
+.report-status-section.pending .report-table th{background:#fff7e5;color:#946d10;border-bottom:2px solid rgba(194,140,32,.35)}
+.report-status-section.completed .report-table td:first-child{border-left:2px solid rgba(40,121,78,.12)}.report-status-section.processing .report-table td:first-child{border-left:2px solid rgba(36,102,167,.12)}.report-status-section.pending .report-table td:first-child{border-left:2px solid rgba(194,140,32,.14)}
+@media print{
+  html,body{margin:0!important;padding:0!important;background:#fff!important}
+  body *{visibility:hidden!important}
+  .report-viewer,.report-viewer *{visibility:visible!important}
+  .report-viewer{position:absolute!important;left:0!important;top:0!important;width:100%!important;border:0!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}
+  .report-viewer-toolbar{display:none!important}
+  .report-document{padding:0!important;margin:0!important;width:auto!important;max-width:none!important;background:#fff!important}
+  .report-doc-header{padding-bottom:7px!important;margin-bottom:10px!important}
+  .report-doc-header h1{font-size:17pt!important;margin:4px 0!important}
+  .report-doc-header .agency{font-size:8pt!important}
+  .report-doc-header .doc-meta{font-size:7.5pt!important}
+  .report-source-summary{gap:6px!important;margin-bottom:7px!important}
+  .report-source-summary>div{padding:5px 7px!important}
+  .report-source-summary span{font-size:7pt!important}
+  .report-source-summary b{font-size:13pt!important}
+  .report-sync-note{font-size:7pt!important;margin-bottom:9px!important;padding:4px 6px!important}
+  .report-status-section{margin:10px 0!important;break-inside:auto!important;page-break-inside:auto!important}
+  .report-status-title{padding:5px 8px!important;margin-bottom:4px!important;font-size:9pt!important;break-after:avoid!important;page-break-after:avoid!important}
+  .report-table-wrap{overflow:visible!important;border-radius:4px!important}
+  .report-table{width:100%!important;min-width:0!important;font-size:7.5pt!important;table-layout:fixed!important}
+  .report-table th{font-size:7pt!important;padding:5px 6px!important}
+  .report-table td{padding:5px 6px!important;line-height:1.2!important}
+  .report-table th:nth-child(1),.report-table td:nth-child(1){width:15%!important}
+  .report-table th:nth-child(2),.report-table td:nth-child(2){width:21%!important}
+  .report-table th:nth-child(3),.report-table td:nth-child(3){width:39%!important}
+  .report-table th:nth-child(4),.report-table td:nth-child(4){width:25%!important}
+  .report-subsection{margin-top:7px!important;break-inside:auto!important;page-break-inside:auto!important}
+  .report-subsection-title{padding:5px 8px!important;font-size:8.5pt!important;break-after:avoid!important;page-break-after:avoid!important}
+  .report-footer{margin-top:9px!important;padding-top:6px!important;font-size:6.5pt!important}
+}
+
+/* Revision 50: NPAAAD report mirrors the live dashboard summary and auto-refreshes while open. */
+.report-source-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 10px}.report-source-summary>div{border:1px solid #dce3ea;border-radius:8px;padding:8px 10px;text-align:center;background:linear-gradient(180deg,#fff,#f5f8fb)}.report-source-summary span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.35px;color:#687789;font-weight:700}.report-source-summary b{display:block;font-size:17px;color:#123b67;margin-top:2px}.report-sync-note{font-size:8px;color:#687789;text-align:center;margin:0 0 16px;padding:6px 8px;border-radius:6px;background:#f3f7fa;border:1px solid #e1e8ee}@media(max-width:600px){.report-source-summary{grid-template-columns:1fr}}
+
+/* Revision 52: segregated Waiting for CSM within Pending */
+.report-subsection{margin-top:14px}
+.report-subsection-title{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 12px;border-radius:8px;background:#f3f5f8;color:#243447;font-weight:700;border:1px solid #e1e6eb}
+.report-subsection-title span{font-weight:600;font-size:.88rem;color:#687684;white-space:nowrap}
+
+/* Revision 56: preserve status colors in printed A4/PDF output. */
+.report-document,
+.report-status-section,
+.report-status-title,
+.report-status-title span,
+.report-table-wrap,
+.report-table,
+.report-table th,
+.report-table td,
+.report-source-summary > div,
+.report-sync-note,
+.report-subsection-title {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+@media print {
+  .report-status-section.completed .report-status-title { background: #28794e !important; color: #fff !important; }
+  .report-status-section.processing .report-status-title { background: #2466a7 !important; color: #fff !important; }
+  .report-status-section.pending .report-status-title { background: #c28c20 !important; color: #fff !important; }
+  .report-status-section.completed .report-table th { background: #edf8f1 !important; color: #236b46 !important; border-bottom-color: rgba(40,121,78,.3) !important; }
+  .report-status-section.processing .report-table th { background: #edf4fb !important; color: #205d96 !important; border-bottom-color: rgba(36,102,167,.3) !important; }
+  .report-status-section.pending .report-table th { background: #fff7e5 !important; color: #946d10 !important; border-bottom-color: rgba(194,140,32,.35) !important; }
+  .report-status-section.completed { border-left: 5px solid #28794e !important; }
+  .report-status-section.processing { border-left: 5px solid #2466a7 !important; }
+  .report-status-section.pending { border-left: 5px solid #c28c20 !important; }
+  .report-source-summary > div:nth-child(1) { border-top: 3px solid #28794e !important; }
+  .report-source-summary > div:nth-child(2) { border-top: 3px solid #2466a7 !important; }
+  .report-source-summary > div:nth-child(3) { border-top: 3px solid #c28c20 !important; }
+}
+
+/* Revision 60 — NPAAAD Pending breakdown */
+.npaaad-pending-breakdown{padding:4px 8px !important;}
+.npaaad-pending-inner{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;}
+.npaaad-pending-total{min-width:55px;text-align:center;}
+.npaaad-pending-total strong{display:block;}
+.npaaad-pending-subcounts{display:flex;align-items:center;gap:8px;border-left:1px solid rgba(255,255,255,.34);padding-left:10px;}
+.npaaad-pending-subcounts span{display:flex;flex-direction:column;align-items:center;min-width:27px;}
+.npaaad-pending-subcounts b{font-size:7px;line-height:1.1;color:rgba(255,255,255,.92);}
+.npaaad-pending-subcounts strong{font-size:15px !important;line-height:1.05 !important;margin-top:2px !important;color:#fff !important;}
+
+/* Revision 61: Pending breakdown labels/counts use neutral gray to read as subcounts under Pending */
+.npaaad-pending-subcounts{border-left-color:rgba(95,105,115,.28);}
+.npaaad-pending-subcounts b,.npaaad-pending-subcounts strong{color:#66707a !important;}
+
+/* Revision 62 — Make Pending total dominant while keeping CSM/Data clearly visible */
+.npaaad-pending-breakdown .npaaad-pending-inner{gap:16px;}
+.npaaad-pending-breakdown .npaaad-pending-total{min-width:72px;text-align:center;}
+.npaaad-pending-breakdown .npaaad-pending-total small{font-size:10px;font-weight:700;color:#fff;}
+.npaaad-pending-breakdown .npaaad-pending-total strong{font-size:27px !important;line-height:1.05 !important;color:#fff !important;margin-top:3px !important;font-weight:800;}
+.npaaad-pending-breakdown .npaaad-pending-subcounts{gap:10px;border-left:1px solid rgba(255,255,255,.45);padding-left:12px;}
+.npaaad-pending-breakdown .npaaad-pending-subcounts span{min-width:30px;}
+.npaaad-pending-breakdown .npaaad-pending-subcounts b{font-size:8px;line-height:1.1;color:#eef1f3 !important;font-weight:700;}
+.npaaad-pending-breakdown .npaaad-pending-subcounts strong{font-size:13px !important;line-height:1.05 !important;color:#eef1f3 !important;margin-top:3px !important;font-weight:700;}
+
+/* Revision 65: Integration and Harmonization report table */
+.integration-report-table{min-width:1050px}
+.integration-report-table td,.integration-report-table th{vertical-align:top}
+@media print{.integration-report-table{min-width:0!important;font-size:6.5pt!important}.integration-report-table th{font-size:6pt!important}.integration-report-table td{padding:4px 4px!important}.integration-report-table th:nth-child(1),.integration-report-table td:nth-child(1){width:9%!important}.integration-report-table th:nth-child(2),.integration-report-table td:nth-child(2){width:12%!important}.integration-report-table th:nth-child(3),.integration-report-table td:nth-child(3){width:13%!important}.integration-report-table th:nth-child(4),.integration-report-table td:nth-child(4){width:17%!important}.integration-report-table th:nth-child(5),.integration-report-table td:nth-child(5){width:12%!important}.integration-report-table th:nth-child(6),.integration-report-table td:nth-child(6){width:14%!important}.integration-report-table th:nth-child(7),.integration-report-table td:nth-child(7){width:23%!important}}
+
+/* Report analytics */
+.report-analytics{margin-top:28px;padding-top:20px;border-top:2px solid #e4eaf0}
+.report-analytics-title{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}.report-analytics-title span{font-size:15px;font-weight:800;color:#173b63}.report-analytics-title small{font-size:9px;color:#7a8795}
+.report-chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.report-chart-card{border:1px solid #dce4eb;border-radius:12px;background:linear-gradient(180deg,#fff,#f8fafc);padding:15px;box-shadow:0 5px 16px rgba(20,40,65,.06)}.report-chart-card:first-child{grid-column:1/-1}
+.report-chart-head{display:flex;justify-content:space-between;align-items:start;gap:10px;margin-bottom:12px}.report-chart-head h3{margin:0;color:#183c62;font-size:12px}.report-chart-head p{margin:4px 0 0;color:#758294;font-size:8.5px;line-height:1.4}.report-chart-total{font-size:8px;font-weight:800;color:#5f6e7e;background:#eef3f7;border:1px solid #dce4ea;border-radius:20px;padding:4px 7px;white-space:nowrap}
+.report-donut-row{display:flex;align-items:center;justify-content:center;gap:34px;min-height:170px}.report-donut{width:156px;height:156px;border-radius:50%;display:grid;place-items:center;position:relative;box-shadow:0 3px 12px rgba(20,40,65,.08)}.report-donut-hole{width:92px;height:92px;border-radius:50%;background:#fff;display:grid;place-items:center;align-content:center;box-shadow:inset 0 0 0 1px #edf1f4}.report-donut-hole b{font-size:22px;color:#173b63}.report-donut-hole span{font-size:8px;color:#7a8795;margin-top:1px}.report-chart-legend{display:grid;gap:12px;min-width:180px}.report-legend-item{display:flex;align-items:center;gap:9px}.report-legend-dot,.report-mini-legend i{width:10px;height:10px;border-radius:3px;display:inline-block;flex:0 0 auto}.report-legend-dot.completed,.report-mini-legend i.completed{background:#28794e}.report-legend-dot.processing,.report-mini-legend i.processing{background:#2466a7}.report-legend-dot.pending,.report-mini-legend i.pending{background:#c28c20}.report-legend-item b{display:block;font-size:9px;color:#33465a}.report-legend-item div span{display:block;font-size:8px;color:#7a8795;margin-top:2px}
+.report-bar-list{display:grid;gap:10px}.report-bar-row{display:grid;grid-template-columns:120px 1fr 26px;align-items:center;gap:8px}.report-bar-label{font-size:8px;color:#45566a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.report-bar-track{height:15px;background:#edf1f4;border-radius:5px;overflow:hidden;display:flex}.report-bar-seg{height:100%;min-width:0}.report-bar-seg.completed{background:#28794e}.report-bar-seg.processing{background:#2466a7}.report-bar-seg.pending{background:#c28c20}.report-bar-total{text-align:right;font-size:8px;color:#526274}.report-mini-legend{display:flex;gap:15px;margin-top:12px;padding-top:9px;border-top:1px solid #e7edf2}.report-mini-legend span{font-size:8px;color:#69788a;display:flex;align-items:center;gap:5px}.report-mini-legend i{width:8px;height:8px}
+@media(max-width:700px){.report-chart-grid{grid-template-columns:1fr}.report-chart-card:first-child{grid-column:auto}.report-donut-row{gap:18px}.report-donut{width:130px;height:130px}.report-donut-hole{width:78px;height:78px}.report-bar-row{grid-template-columns:90px 1fr 22px}}
+@media print{.report-analytics{break-inside:avoid;page-break-inside:avoid;margin-top:16px;padding-top:12px}.report-chart-grid{grid-template-columns:1fr 1fr}.report-chart-card:first-child{grid-column:1/-1;break-inside:avoid;page-break-inside:avoid}.report-chart-card{box-shadow:none;padding:10px}.report-donut{width:105px;height:105px}.report-donut-hole{width:65px;height:65px}.report-donut-hole b{font-size:16px}.report-donut-row{min-height:115px}.report-bar-row{grid-template-columns:105px 1fr 22px;gap:5px}.report-analytics-title span{font-size:11pt}.report-analytics-title small{font-size:6.5pt}}
+
+/* Revision 79 - live municipal boundary map */
+.map-panel-head{align-items:flex-start}.map-legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end;font-size:9px;color:#637381}.map-legend span{white-space:nowrap}.map-legend .legend-dot{margin-right:5px}.map-status-completed{background:#16a34a}.map-status-processing{background:#3b82f6}.map-status-pending{background:#f59e0b}.map-status-none{background:#a7afb8}
+.map-toolbar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);background:#fbfcfd;flex-wrap:wrap}.map-search-wrap{position:relative;display:flex;align-items:center;flex:1 1 300px;max-width:430px}.map-search{width:100%;height:34px;border:1px solid #d7e0e6;border-radius:7px;background:#fff;padding:0 34px 0 31px;font:400 10px Inter;color:#17324a;outline:none}.map-search:focus{border-color:#7aa6c6;box-shadow:0 0 0 3px rgba(49,130,206,.08)}.map-search-icon{position:absolute;left:11px;color:#728394;font-size:15px;z-index:1}.map-search-clear{position:absolute;right:5px;width:25px;height:25px;border:0;background:transparent;color:#8a97a3;font-size:17px;cursor:pointer;border-radius:5px}.map-search-clear:hover{background:#edf2f5}.map-filter-group{display:flex;gap:5px;flex-wrap:wrap}.map-filter{border:1px solid #d8e0e6;background:#fff;color:#5e7080;border-radius:6px;padding:7px 9px;font:600 9px Inter;cursor:pointer}.map-filter:hover{background:#f1f5f7}.map-filter.active{background:#123b5d;border-color:#123b5d;color:#fff}.map-live-note{margin-left:auto;font-size:8px;color:#7b8995;white-space:nowrap}.map-panel #map{background:#eef2f4}.municipality-popup{font:10px Inter,Arial,sans-serif;color:#17324a;min-width:190px}.municipality-popup h4{margin:0 0 4px;font-size:13px;color:#173b63}.municipality-popup .province{color:#718096;font-size:9px;margin-bottom:8px}.municipality-popup .status-line{display:flex;align-items:center;gap:6px;font-weight:700}.municipality-popup .status-dot{width:9px;height:9px;border-radius:50%;display:inline-block}.municipality-popup small{display:block;margin-top:6px;color:#8795a1;font-size:8px}
+@media(max-width:900px){.map-live-note{width:100%;margin-left:0}.map-panel-head{flex-direction:column}.map-legend{justify-content:flex-start}}
+
+/* Live Integration Summary — same symbology as the Interactive Map */
+.integration-status-distribution>div>div:first-child span{display:flex;align-items:center;gap:6px}
+.summary-status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:0 0 8px}
+.completed-dot{background:#16a34a}.processing-dot{background:#3b82f6}.pending-dot{background:#f59e0b}.no-integration-dot{background:#a7afb8}
+
+/* Revision 90 — compact Integration Summary so all four statuses fit cleanly */
+.dashboard-side-column{
+  grid-template-rows:190px minmax(0, 1fr);
+}
+.dashboard-side-column .integration-panel .panel-head{
+  padding:11px 16px;
+}
+.dashboard-side-column .integration-panel .panel-head h2{
+  font-size:13px;
+  margin:0;
+}
+.dashboard-side-column .integration-panel .progress-list{
+  padding:10px 16px 2px;
+}
+.dashboard-side-column .integration-panel .progress-list>div{
+  margin-bottom:8px;
+}
+.dashboard-side-column .integration-panel .progress-list>div:last-child{
+  margin-bottom:0;
+}
+.dashboard-side-column .integration-panel .progress-list>div>div:first-child{
+  font-size:9px;
+  margin-bottom:4px;
+}
+.dashboard-side-column .integration-panel .progress-list b{
+  font-size:9px;
+}
+.dashboard-side-column .integration-panel .progress{
+  height:6px;
+}
+@media(max-width:1050px){
+  .dashboard-side-column{grid-template-rows:auto auto;}
+}
