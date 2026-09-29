@@ -24,7 +24,6 @@
 
     <nav class="nav">
       <button class="nav-item active" data-page="dashboard"><span class="icon">▦</span><span>Dashboard</span></button>
-      <button class="nav-item" data-page="emails"><span class="icon">✉</span><span>Email Management</span></button>
 
       <div class="nav-group">
         <button class="nav-item nav-parent" id="database-toggle" type="button">
@@ -69,8 +68,14 @@
             <span class="live-source-badge" id="npaaad-live-status">Live</span>
           </div>
           <div class="mini-grid">
-            <button class="mini-card completed npaaad-status-card" type="button" data-npaaad-status="completed">
-              <div><small>Completed</small><strong id="npaaad-completed-count">—</strong></div>
+            <button class="mini-card completed npaaad-status-card npaaad-completed-breakdown" type="button" data-npaaad-status="completed">
+              <div class="npaaad-completed-inner">
+                <div class="npaaad-completed-total"><small>Completed</small><strong id="npaaad-completed-count">—</strong></div>
+                <div class="npaaad-completed-subcounts" aria-label="Completed breakdown">
+                  <span><b>w/ CSM</b><strong id="npaaad-csm-count">—</strong></span>
+                  <span><b>w/o CSM</b><strong id="npaaad-wocsm-count">—</strong></span>
+                </div>
+              </div>
             </button>
             <button class="mini-card ongoing npaaad-status-card" type="button" data-npaaad-status="processing">
               <div><small>Processing</small><strong id="npaaad-processing-count">—</strong></div>
@@ -78,10 +83,7 @@
             <button class="mini-card pending npaaad-status-card npaaad-pending-breakdown" type="button" data-npaaad-status="pending">
               <div class="npaaad-pending-inner">
                 <div class="npaaad-pending-total"><small>Pending</small><strong id="npaaad-pending-count">—</strong></div>
-                <div class="npaaad-pending-subcounts" aria-label="Pending breakdown">
-                  <span><b>CSM</b><strong id="npaaad-csm-count">—</strong></span>
-                  <span><b>Data</b><strong id="npaaad-data-count">—</strong></span>
-                </div>
+
               </div>
             </button>
           </div>
@@ -185,39 +187,35 @@
             </div>
           </div>
 
-          <div class="panel activity-panel">
-            <div class="panel-head">
+          <div class="panel activity-panel google-calendar-panel">
+            <div class="panel-head google-calendar-head">
               <div>
-                <h2>ALRMS Activities and Schedules</h2>
-                
+                <div class="google-calendar-title-row">
+                  <div>
+                    <h2>ALRMS Activities and Schedules</h2>
+                    <p>Official ALRMS schedule calendar • Asia/Manila time</p>
+                  </div>
+                  <span class="google-calendar-live-badge"><i></i> LIVE</span>
+                </div>
               </div>
+              <a class="google-calendar-open" href="https://calendar.google.com/calendar/u/0/r?cid=bnBhYWFkc2FmZHpyZXF1ZXN0c0BnbWFpbC5jb20&pli=1" target="_blank" rel="noopener noreferrer">Open Google Calendar ↗</a>
             </div>
-            <div class="alrms-calendar-wrap">
-              <div class="alrms-calendar-toolbar">
-                <button type="button" class="calendar-nav-btn" id="alrms-cal-prev" aria-label="Previous month">‹</button>
-                <div class="alrms-calendar-title" id="alrms-cal-title">Loading calendar…</div>
-                <button type="button" class="calendar-nav-btn" id="alrms-cal-next" aria-label="Next month">›</button>
-              </div>
-              <div class="alrms-calendar-weekdays" aria-hidden="true">
-                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-              </div>
-              <div id="alrms-calendar-grid" class="alrms-calendar-grid" aria-live="polite"></div>
-              <div class="alrms-calendar-legend">
-                <span><i class="calendar-key holiday-key"></i> Philippine holiday</span>
-                <span><i class="calendar-key schedule-key"></i> ALRMS schedule</span>
-                <span class="calendar-help">Click a date to add or edit a schedule.</span>
-              </div>
+            <div class="google-calendar-frame-wrap">
+              <iframe
+                class="google-calendar-frame"
+                title="ALRMS Activities and Schedules Google Calendar"
+                src="https://calendar.google.com/calendar/embed?src=npaaadsafdzrequests%40gmail.com&ctz=Asia%2FManila&mode=MONTH&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=en"
+                frameborder="0"
+                scrolling="no"
+                loading="lazy">
+              </iframe>
+            </div>
+            <div class="google-calendar-footer">
+              <span><i class="calendar-sync-dot"></i> Calendar time zone: Asia/Manila</span>
+              <span>Updates made in Google Calendar are reflected here automatically.</span>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section id="emails" class="page">
-      <div class="page-card">
-        <div class="page-card-head"><div><h2>Email Management</h2><p>Centralized monitoring of incoming ALMED emails.</p></div><button class="primary">+ Add Email</button></div>
-        <input class="search" placeholder="Search sender, subject, assigned staff, or status..." oninput="filterTable(this,'email-table')">
-        <div class="table-wrap"><table id="email-table"><thead><tr><th>Date Received</th><th>Sender</th><th>Subject</th><th>Assigned To</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table></div>
       </div>
     </section>
 
@@ -285,7 +283,7 @@
             <div><h2 id="report-viewer-title">Report</h2><p id="report-viewer-meta"></p></div>
             <div class="report-toolbar-actions">
               <button type="button" class="secondary-btn" id="report-back">← Back to Reports</button>
-              <button type="button" class="secondary-btn" id="report-print">Print</button><button type="button" class="primary" id="report-download">Save PDF</button>
+              <button type="button" class="report-print-save-btn" id="report-print">Print/Save PDF</button>
             </div>
           </div>
           <div id="npaaad-report-document" class="report-document"></div>

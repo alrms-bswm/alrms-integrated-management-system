@@ -28,13 +28,13 @@ const personnel = [
   ["JOHN ALGEN B. MENDEZ","OIC, ALRMS","formal-john-algen-mendez.png"],
   ["VALERIO R. ABLAZA JR.","Agriculturist II","formal-valerio-r-ablaza-jr.png"],
   ["WARREN A. DEL ROSARIO","Agriculturist II","formal-warren-a-del-rosario.png"],
-  ["Katrina S. BUDUAN","Agriculturist I","formal-katrina-s-buduan.png"],
-  ["Ma. Monette P. Serrano","Project Development Officer II","formal-ma-monette-p-serrano.png"],
-  ["Mary Grace T. Dela Cruz","Project Development Officer II","formal-mary-grace-t-dela-cruz.png"],
-  ["Glory T. Ibayan","Science Research Specialist I","formal-glory-t-ibayan.png"],
-  ["Michaela Grace L. Encisa","Science Research Specialist I","formal-michaela-grace-l-encisa.png"],
-  ["Eloisa Gerly R. Capistrano","Project Assistant III","formal-eloisa-gerly-r-capistrano.png"],
-  ["Cristel June M. Montes","Project Assistant II","formal-cristel-june-m-montes.png"]
+  ["KATRINA S. BUDUAN","Agriculturist I","formal-katrina-s-buduan.png"],
+  ["MA. MONETTE P. SERRANO","Project Development Officer II","formal-ma-monette-p-serrano.png"],
+  ["MA. ANJENITTE D. CARULLA","Project Development Officer II","formal-ma-anjenitte-d-carulla.png"],
+  ["GLORY T. IBAYAN","Science Research Specialist I","formal-glory-t-ibayan.png"],
+  ["MICHAELA GRACE L. ENCISA","Science Research Specialist I","formal-michaela-grace-l-encisa.png"],
+  ["ELOISA GERLY R. CAPISTRANO","Project Assistant III","formal-eloisa-gerly-r-capistrano.png"],
+  ["CRISTEL JUNE M. MONTES","Science Research Specialist I","formal-cristel-june-m-montes.png"]
 ];
 
 function counts(){
@@ -249,7 +249,7 @@ document.getElementById("database-toggle").addEventListener("click",()=>{
   document.querySelector("#database-toggle .chevron").style.transform =
     menu.classList.contains("open") ? "rotate(0deg)" : "rotate(-90deg)";
 });
-updateDashboard(); fillEmailTable(); fillPersonnel(); initMap();
+updateDashboard(); fillPersonnel(); initMap();
 
 document.querySelectorAll(".request-filter").forEach(btn=>{
   btn.addEventListener("click",()=>{
@@ -480,9 +480,9 @@ function escapeHtml(value){
    Live NPAAAD / SAFDZ status summary
    Source: Google Sheet, Column Q (Status), gid 1353377872
    Mapping:
-   Completed Request -> Completed
+   Completed Request -> Completed (With CSM)
+   Waiting for CSM -> Completed (Without CSM)
    Please Process -> Processing
-   Waiting for CSM -> Pending
    Waiting for required Data/Documents -> Pending
    ========================================================= */
 const NPAAAD_SHEET_ID="1ZToIiqNIkTejiJ50n3kIbPLLrvQno8b9";
@@ -496,9 +496,9 @@ function normalizeSheetStatus(value){
 }
 function mapNpaaadStatus(value){
   const s=normalizeSheetStatus(value);
-  if(s==="completed request" || s==="completed") return "completed";
+  if(s==="completed request" || s==="completed" || s==="waiting for csm") return "completed";
   if(s==="please process" || s==="processing" || s==="on-going processing" || s==="on going processing") return "processing";
-  if(s==="waiting for csm" || s==="waiting for required data/documents" || s==="waiting for required data/documents" || s==="pending") return "pending";
+  if(s==="waiting for required data/documents" || s==="pending") return "pending";
   return null;
 }
 function setNpaaadCounts(counts){
@@ -506,11 +506,13 @@ function setNpaaadCounts(counts){
   const p=document.getElementById("npaaad-processing-count");
   const n=document.getElementById("npaaad-pending-count");
   const csm=document.getElementById("npaaad-csm-count");
+  const wocsm=document.getElementById("npaaad-wocsm-count");
   const data=document.getElementById("npaaad-data-count");
   if(c)c.textContent=counts.completed;
   if(p)p.textContent=counts.processing;
   if(n)n.textContent=counts.pending;
-  if(csm)csm.textContent=counts.waitingForCsm ?? 0;
+  if(csm)csm.textContent=counts.originalCompleted ?? 0;
+  if(wocsm)wocsm.textContent=counts.waitingForCsm ?? 0;
   if(data)data.textContent=counts.waitingForData ?? 0;
 }
 function setNpaaadLiveNote(message,ok=true){
@@ -546,13 +548,14 @@ function refreshNpaaadStatus(){
     try{
       if(serial!==npaaadRequestSerial)return;
       const rows=(response && response.table && response.table.rows)||[];
-      const counts={completed:0,processing:0,pending:0,waitingForCsm:0,waitingForData:0};
+      const counts={completed:0,processing:0,pending:0,originalCompleted:0,waitingForCsm:0,waitingForData:0};
       rows.forEach(row=>{
         const cell=row.c && row.c[0];
         const value=cell ? (cell.v!==null && cell.v!==undefined ? cell.v : cell.f||"") : "";
         const normalized=normalizeSheetStatus(value);
         const mapped=mapNpaaadStatus(value);
         if(mapped)counts[mapped]++;
+        if(normalized==="completed request" || normalized==="completed") counts.originalCompleted++;
         if(normalized==="waiting for csm") counts.waitingForCsm++;
         else if(normalized==="waiting for required data/documents") counts.waitingForData++;
       });
@@ -574,13 +577,216 @@ function setupNpaaadLiveStatus(){
 }
 
 
-function pdfEscape(value){return String(value??"").replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)").replace(/[\r\n]+/g," ");}
+function pdfEscape(value){
+  return String(value??"")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/[•·]/g,"-")
+    .replace(/[“”]/g,'"')
+    .replace(/[‘’]/g,"'")
+    .replace(/[^\x20-\x7E]/g,"?")
+    .replace(/\\/g,"\\\\")
+    .replace(/\(/g,"\\(")
+    .replace(/\)/g,"\\)")
+    .replace(/[\r\n]+/g," ");
+}
 function pdfWrap(text,maxChars){const words=String(text??"").split(/\s+/).filter(Boolean),lines=[];let line="";for(const w of words){if(!line){line=w.slice(0,maxChars);if(w.length>maxChars){lines.push(line);line=w.slice(maxChars);}}else if(line.length+1+w.length<=maxChars)line+=" "+w;else{lines.push(line);line=w;}}if(line||!lines.length)lines.push(line);return lines;}
+
+function saveGeneratedPdf(pdfText, filename){
+  /*
+   * ALRMS Report Viewer PDF download
+   * The button is user-initiated, so the browser may download the file
+   * automatically to its configured Downloads folder. A website cannot
+   * silently choose an arbitrary local folder because of browser security.
+   */
+  try{
+    if(typeof pdfText !== 'string' || !pdfText.startsWith('%PDF-')){
+      throw new Error('Invalid PDF data generated.');
+    }
+
+    // Force a real binary PDF Blob rather than relying on implicit string encoding.
+    const bytes = new TextEncoder().encode(pdfText);
+    const blob = new Blob([bytes], {type:'application/pdf'});
+    const url = URL.createObjectURL(blob);
+    const safeName = String(filename || 'ALRMS_Report.pdf').replace(/[\\/:*?"<>|]+/g,'_');
+
+    // Legacy Microsoft browser support, if ever needed.
+    if(window.navigator && typeof window.navigator.msSaveOrOpenBlob === 'function'){
+      window.navigator.msSaveOrOpenBlob(blob, safeName);
+      setTimeout(()=>{try{URL.revokeObjectURL(url);}catch(e){}},10000);
+      return true;
+    }
+
+    const a = document.createElement('a');
+    a.id = 'alrms-pdf-download-temp';
+    a.href = url;
+    a.download = safeName;
+    a.setAttribute('download', safeName);
+    a.style.position = 'fixed';
+    a.style.left = '-9999px';
+    a.style.top = '0';
+    a.style.width = '1px';
+    a.style.height = '1px';
+    a.style.opacity = '0';
+    a.tabIndex = -1;
+    document.body.appendChild(a);
+
+    // Keep the click directly tied to the user's Save PDF button action.
+    a.click();
+
+    // A second standards-based dispatch helps browsers that don't honor
+    // HTMLElement.click() consistently for Blob downloads.
+    try{
+      a.dispatchEvent(new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        buttons: 1
+      }));
+    }catch(e){}
+
+    setTimeout(()=>{
+      try{a.remove();}catch(e){}
+      try{URL.revokeObjectURL(url);}catch(e){}
+    },10000);
+
+    return true;
+  }catch(err){
+    console.error('ALRMS Save PDF error:', err);
+    alert('The PDF could not be downloaded. Please try the Print button and choose Save as PDF.');
+    return false;
+  }
+}
+function drawPdfAnalytics(groups, ctx, opts={}){
+  const {M,W,U,yRef,setY,need,T,R,L,C}=ctx;
+  let y=yRef();
+  const statusTotal=groups.completed.length+groups.processing.length+groups.pending.length;
+  need(36); y=yRef();
+  T(M,y,"Analytics & Insights",12,true,[23,59,99]); y-=9;
+  T(M,y,"Visual summary of the classified report data",6.5,false,[105,116,128]); y-=12;
+  const gap=6,bw=(U-gap*2)/3;
+  [['Completed',groups.completed.length,'completed'],['Processing',groups.processing.length,'processing'],['Pending',groups.pending.length,'pending']].forEach((a,i)=>{
+    const x=M+i*(bw+gap); R(x,y,bw,31,[248,250,252],[220,226,233]); R(x,y,bw,3,C[a[2]]);
+    T(x+7,y-12,a[0],6,true,[75,82,92]); T(x+7,y-25,String(a[1]),12,true,[35,62,101]);
+  });
+  y-=41; setY(y);
+  const drawBarRows=(rows,title)=>{
+    need(27); y=yRef();
+    T(M,y,title,9.5,true,[35,62,101]); y-=8;
+    const max=Math.max(1,...rows.map(x=>x[1].total));
+    for(const [name,v] of rows){
+      const rh=14; need(rh+2); y=yRef();
+      const label=String(name||'Unspecified');
+      T(M,y-10,label.length>31?label.slice(0,28)+'...':label,5.5,false,[69,86,106]);
+      const xBar=M+145, wBar=U-145-28, h=7;
+      R(xBar,y-4,wBar,h,[237,241,244]);
+      const parts=[['completed',v.completed],['processing',v.processing],['pending',v.pending]]; let xx=xBar;
+      parts.forEach(([k,val])=>{if(!val)return;const ww=wBar*(val/max);R(xx,y-4,ww,h,C[k]);xx+=ww;});
+      T(M+U-18,y-10,String(v.total),5.8,true,[82,98,116]);
+      y-=rh; setY(y);
+    }
+    y-=4; setY(y);
+  };
+  const allProvince=opts.locationField?reportGroupLocationStats(groups,opts.locationField,null):[];
+  if(opts.locationField) drawBarRows(allProvince,opts.locationTitle||"Requests by Province");
+  if(opts.regionField) drawBarRows(reportGroupRegionStats(groups),opts.regionTitle||"Requests by Region");
+  return yRef();
+}
+
+function drawPdfAnalyticsLandscape(groups, ctx, opts={}){
+  const {M,W,U,yRef,setY,T,R,L,C,ops}=ctx;
+  let y=yRef();
+  const total=groups.completed.length+groups.processing.length+groups.pending.length;
+  const pct=v=>total?((v/total)*100).toFixed(1):'0.0';
+  const card=(x,top,w,h)=>{R(x,top,w,h,[255,255,255],[220,228,235]);};
+  const circle=(cx,cy,r,c)=>{
+    const k=.5522847498*r;
+    ops.push(`${c[0]/255} ${c[1]/255} ${c[2]/255} rg ${cx+r} ${cy} m ${cx+r} ${cy+k} ${cx+k} ${cy+r} ${cx} ${cy+r} c ${cx-k} ${cy+r} ${cx-r} ${cy+k} ${cx-r} ${cy} c ${cx-r} ${cy-k} ${cx-k} ${cy-r} ${cx} ${cy-r} c ${cx+k} ${cy-r} ${cx+r} ${cy-k} ${cx+r} ${cy} c f`);
+  };
+  // Status Distribution card
+  T(M,y,'Analytics & Insights',14,true,[23,59,99]);
+  T(W-M-145,y,'Live visual summary • updates with the report data',6.5,false,[105,116,128]);
+  y-=12;
+  const topH=180, topY=y;
+  card(M,topY,U,topH);
+  T(M+12,topY-17,'Status Distribution',8.8,true,[35,62,101]);
+  T(M+12,topY-29,'Percentage of classified requests by current status.',5.5,false,[105,116,128]);
+  const badgeW=42; R(M+U-badgeW-10,topY-10,badgeW,16,[238,243,247],[220,228,235]);
+  T(M+U-badgeW-4,topY-21,`${total} total`,5.4,true,[82,98,116]);
+  const cx=M+U*.46, cy=topY-91, outer=58, inner=34;
+  const vals=[['completed',groups.completed.length,C.completed],['processing',groups.processing.length,C.processing],['pending',groups.pending.length,C.pending]];
+  // Draw a segmented donut using arc paths.
+  let start=-Math.PI/2;
+  vals.forEach(([key,val,col])=>{
+    if(!val)return;
+    const end=start+2*Math.PI*(val/Math.max(1,total));
+    const seg=Math.max(0.001,end-start);
+    const n=Math.max(8,Math.ceil(seg/(Math.PI/8)));
+    let pts=[];
+    for(let i=0;i<=n;i++){const a=start+seg*i/n;pts.push([cx+outer*Math.cos(a),cy+outer*Math.sin(a)]);}
+    let path=`${col[0]/255} ${col[1]/255} ${col[2]/255} rg ${cx} ${cy} m ${pts.map(pt=>`${pt[0]} ${pt[1]} l`).join(' ')} h f`;
+    ops.push(path);
+    start=end;
+  });
+  circle(cx,cy,inner,[255,255,255]);
+  T(cx-10,cy+5,String(total),15,true,[23,59,99]);
+  T(cx-14,cy-8,'Requests',5.5,false,[105,116,128]);
+  const lx=cx+105, ly=topY-58;
+  vals.forEach(([key,val])=>{
+    const label=key==='completed'?'Completed':key==='processing'?'Processing':'Pending';
+    const col=C[key];
+    R(lx,ly-7,7,7,col);
+    T(lx+13,ly,label,6.2,true,[51,70,90]);
+    T(lx+13,ly-9,`${val} • ${pct(val)}%`,5.2,false,[122,135,148]);
+    ly-=29;
+  });
+  y=topY-topH-14;
+  const gap=14, cardW=(U-gap)/2, bottomTop=y;
+  const drawBarCard=(x, title, subtitle, rows, badge)=>{
+    const cardH=292;
+    card(x,bottomTop,cardW,cardH);
+    T(x+12,bottomTop-17,title,8.8,true,[35,62,101]);
+    T(x+12,bottomTop-29,subtitle,5.5,false,[105,116,128]);
+    const bw=badge.length>15?62:48; R(x+cardW-bw-10,bottomTop-10,bw,16,[238,243,247],[220,228,235]);
+    T(x+cardW-bw-4,bottomTop-21,badge,5.1,true,[82,98,116]);
+    const max=Math.max(1,...rows.map(r=>r[1].total));
+    let yy=bottomTop-47;
+    rows.forEach(([name,v])=>{
+      const label=String(name||'Unspecified');
+      T(x+12,yy,label.length>29?label.slice(0,27)+'...':label,5.2,false,[69,86,106]);
+      const bx=x+138,bw2=cardW-170,bh=5;
+      R(bx,yy+2,bw2,bh,[237,241,244]);
+      let xx=bx;
+      [['completed',v.completed],['processing',v.processing],['pending',v.pending]].forEach(([k,val])=>{
+        if(!val)return; const ww=bw2*(val/max); R(xx,yy+2,ww,bh,C[k]); xx+=ww;
+      });
+      T(x+cardW-17,yy,String(v.total),5.2,true,[82,98,116]);
+      yy-=13;
+    });
+    const legY=bottomTop-cardH+23;
+    L(x+12,legY+14,x+cardW-12,[231,236,241]);
+    let xx=x+12;
+    [['completed','Completed'],['processing','Processing'],['pending','Pending']].forEach(([k,label])=>{
+      R(xx,legY,7,7,C[k]); T(xx+11,legY+5,label,5.1,false,[105,116,128]); xx+=55;
+    });
+  };
+  const pRows=opts.locationField?reportGroupLocationStats(groups,opts.locationField,null):[];
+  const rRows=opts.regionField?reportGroupRegionStats(groups):[];
+  if(opts.locationField && opts.regionField){
+    drawBarCard(M,opts.locationTitle||'Requests by Province',opts.locationSubtitle||'All provinces with classified requests.',pRows,`${pRows.length} provinces`);
+    drawBarCard(M+cardW+gap,opts.regionTitle||'Requests by Region',opts.regionSubtitle||'Regional distribution of completed, processing, and pending requests.',rRows,`${rRows.length} regions`);
+  }else if(opts.locationField){
+    drawBarCard(M,opts.locationTitle||'Requests by Requester','Classified requests by requester.',pRows,`${pRows.length} requesters`);
+  }
+  y=bottomTop-292-16;
+  setY(y);
+}
+
 function downloadNpaaadPdf(){
   const groups=window.alrmsNpaaadReportGroups;if(!groups)return;
-  const W=595.28,H=841.89,M=30,U=W-2*M,pages=[];let ops=[],y=H-M;
+  let W=595.28,H=841.89,M=30,U=W-2*M;const pages=[];let ops=[],y=H-M;
   const C={completed:[40,121,78],processing:[36,102,167],pending:[194,140,32]};
-  const page=()=>{if(ops.length)pages.push(ops.join("\n"));ops=[];y=H-M;};
+  const page=()=>{if(ops.length)pages.push({body:ops.join("\n"),W,H});ops=[];y=H-M;};
   const need=h=>{if(y-h<M)page();};
   const T=(x,yy,v,size=8,bold=false,c=[38,52,70])=>ops.push(`${c[0]/255} ${c[1]/255} ${c[2]/255} rg BT /${bold?'F2':'F1'} ${size} Tf ${x.toFixed(2)} ${yy.toFixed(2)} Td (${pdfEscape(v)}) Tj ET`);
   const R=(x,yy,w,h,c,stroke)=>{ops.push(`${c[0]/255} ${c[1]/255} ${c[2]/255} rg ${x} ${yy-h} ${w} ${h} re f`);if(stroke)ops.push(`${stroke[0]/255} ${stroke[1]/255} ${stroke[2]/255} RG .6 w ${x} ${yy-h} ${w} ${h} re S`);};
@@ -592,12 +798,14 @@ function downloadNpaaadPdf(){
   sum.forEach((a,i)=>{const x=M+i*(bw+gap);R(x,y,bw,40,[248,250,252],[220,226,233]);R(x,y,bw,4,C[a[2]]);T(x+9,y-14,a[0].toUpperCase(),6.5,true,[75,82,92]);T(x+9,y-31,String(a[1]),16,true,[35,62,101]);});y-=51;
   R(M,y,U,25,[246,249,251],[221,228,235]);T(M+8,y-16,'Synchronized with the Dashboard “Requests for NPAAAD and SAFDZ” Summary Card • Same Column Q status mapping • Live',6.5);y-=37;
   const table=list=>{if(!list.length){need(22);T(M+6,y-14,'No matching requests found in the live sheet.',7,[100,108,118]);y-=22;return;}const ws=[82,118,235,80],hs=['DATE','REQUESTER','SUBJECT','REMARKS / STATUS'];need(25);R(M,y,U,22,[245,247,250],[218,225,232]);let x=M+6;hs.forEach((h,i)=>{T(x,y-15,h,6.2,true,[35,62,101]);x+=ws[i];});y-=22;for(const r of list){const cells=[r.date,r.requester,r.subject,r.status],wraps=cells.map((c,i)=>pdfWrap(c,Math.max(9,Math.floor(ws[i]/4.4)))),rh=Math.max(...wraps.map(a=>a.length))*9+7;need(rh+1);wraps.forEach((arr,i)=>arr.forEach((ln,j)=>T(M+6+ws.slice(0,i).reduce((a,b)=>a+b,0),y-13-j*9,ln,6.8)));L(M,y-rh,M+U);y-=rh;}};
-  const sec=k=>{const label=k==='completed'?'Completed':k==='processing'?'Processing':'Pending',list=groups[k];need(38);R(M,y,U,30,C[k]);T(M+9,y-20,label,8.5,true,[255,255,255]);T(W-M-65,y-20,`${list.length} request${list.length===1?'':'s'}`,7.5,true,[255,255,255]);y-=36;if(k==='pending'){const csm=list.filter(r=>normalizeSheetStatus(r.status)==='waiting for csm'),other=list.filter(r=>normalizeSheetStatus(r.status)!=='waiting for csm');need(23);R(M,y,U,21,[243,245,248],[225,230,235]);T(M+7,y-14,`Waiting for CSM (${csm.length})`,7.2,true);y-=25;table(csm);need(23);R(M,y,U,21,[243,245,248],[225,230,235]);T(M+7,y-14,`Other Pending Requests (${other.length})`,7.2,true);y-=25;table(other);}else table(list);y-=8;};
-  sec('completed');sec('processing');sec('pending');need(25);L(M,y,W-M);y-=13;T(M,y,'Source: NPAAAD and SAFDZ Google Sheet • 2026 • Column 1, Requested by, Subject, Status',6.2,false,[95,104,115]);T(W-M-135,y,`Total classified requests: ${groups.completed.length+groups.processing.length+groups.pending.length}`,6.2,false,[95,104,115]);page();
+  const sec=k=>{const label=k==='completed'?'Completed':k==='processing'?'Processing':'Pending',list=groups[k];need(38);R(M,y,U,30,C[k]);T(M+9,y-20,label,8.5,true,[255,255,255]);T(W-M-65,y-20,`${list.length} request${list.length===1?'':'s'}`,7.5,true,[255,255,255]);y-=36;if(k==='completed'){const withCsm=list.filter(r=>{const s=normalizeSheetStatus(r.status);return s==='completed request'||s==='completed';}),waitingCsm=list.filter(r=>normalizeSheetStatus(r.status)==='waiting for csm');need(23);R(M,y,U,21,[243,248,245],[215,229,220]);T(M+7,y-14,`With CSM (${withCsm.length})`,7.2,true);y-=25;table(withCsm);need(23);R(M,y,U,21,[243,245,248],[225,230,235]);T(M+7,y-14,`Waiting for CSM (${waitingCsm.length})`,7.2,true);y-=25;table(waitingCsm);}else table(list);y-=8;};
+  sec('completed');sec('processing');sec('pending');
+  page(); W=841.89;H=595.28;M=24;U=W-2*M;y=H-M;
+  need(25);L(M,y,W-M);y-=13;T(M,y,'Source: NPAAAD and SAFDZ Google Sheet • 2026 • Column 1, Requested by, Subject, Status',6.2,false,[95,104,115]);T(W-M-135,y,`Total classified requests: ${groups.completed.length+groups.processing.length+groups.pending.length}`,6.2,false,[95,104,115]);page();
   const objs=[],add=o=>(objs.push(o),objs.length),f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'),f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>'),contents=[],pids=[];
-  for(const body of pages)contents.push(add(`<< /Length ${body.length} >>\nstream\n${body}\nendstream`));const pagesId=add('');for(let i=0;i<pages.length;i++)pids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${contents[i]} 0 R >>`));objs[pagesId-1]=`<< /Type /Pages /Kids [${pids.map(id=>id+' 0 R').join(' ')}] /Count ${pids.length} >>`;const root=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
-  let out='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n',off=[0];for(let i=0;i<objs.length;i++){off[i+1]=out.length;out+=`${i+1} 0 obj\n${objs[i]}\nendobj\n`;}const xr=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;for(let i=1;i<=objs.length;i++)out+=String(off[i]).padStart(10,'0')+' 00000 n \n';out+=`trailer\n<< /Size ${objs.length+1} /Root ${root} 0 R >>\nstartxref\n${xr}\n%%EOF`;
-  const a=document.createElement('a'),url=URL.createObjectURL(new Blob([out],{type:'application/pdf'}));a.href=url;a.download='NPAAAD_and_SAFDZ_Request_Report_CY2026.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  for(const pg of pages)contents.push(add(`<< /Length ${pg.body.length} >>\nstream\n${pg.body}\nendstream`));const pagesId=add('');for(let i=0;i<pages.length;i++)pids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${pages[i].W} ${pages[i].H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${contents[i]} 0 R >>`));objs[pagesId-1]=`<< /Type /Pages /Kids [${pids.map(id=>id+' 0 R').join(' ')}] /Count ${pids.length} >>`;const root=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
+  let out='%PDF-1.4\n%ALRMS\n',off=[0];for(let i=0;i<objs.length;i++){off[i+1]=out.length;out+=`${i+1} 0 obj\n${objs[i]}\nendobj\n`;}const xr=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;for(let i=1;i<=objs.length;i++)out+=String(off[i]).padStart(10,'0')+' 00000 n \n';out+=`trailer\n<< /Size ${objs.length+1} /Root ${root} 0 R >>\nstartxref\n${xr}\n%%EOF`;
+  saveGeneratedPdf(out,'NPAAAD_and_SAFDZ_Request_Report_CY2026.pdf');
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
@@ -1032,9 +1240,14 @@ function getGvizCell(row,index){
 function reportEscape(value){return escapeHtml(value===null||value===undefined?"":value);}
 function mapReportNpaaadStatus(value){
   const s=normalizeSheetStatus(value);
-  if(s==="completed request" || s==="completed") return "completed";
+  // For the NPAAAD and SAFDZ Request Report only:
+  // Completed is divided into two subsections:
+  // 1) With CSM = the original Completed Request records
+  // 2) Waiting for CSM = records whose current sheet status is Waiting for CSM
+  // Waiting for required Data/Documents remains Pending.
+  if(s==="completed request" || s==="completed" || s==="waiting for csm") return "completed";
   if(s==="please process" || s==="processing" || s==="on-going processing" || s==="on going processing") return "processing";
-  if(s==="waiting for csm" || s==="waiting for required data/documents" || s==="pending") return "pending";
+  if(s==="waiting for required data/documents" || s==="pending") return "pending";
   return null;
 }
 function reportStatusLabel(status){
@@ -1064,21 +1277,77 @@ function reportStatusChart(groups){
   items.forEach((x,i)=>{const end=start+degs[i];stops.push(`${css[x[2]]} ${start}deg ${end}deg`);start=end;});
   return `<div class="report-chart-card report-status-chart-card"><div class="report-chart-head"><div><h3>Status Distribution</h3><p>Percentage of classified requests by current status.</p></div><span class="report-chart-total">${total} total</span></div><div class="report-donut-row"><div class="report-donut" style="background:conic-gradient(${stops.join(',')})"><div class="report-donut-hole"><b>${total}</b><span>Requests</span></div></div><div class="report-chart-legend">${items.map(x=>`<div class="report-legend-item"><span class="report-legend-dot ${x[2]}"></span><div><b>${x[0]}</b><span>${x[1]} · ${pct(x[1]).toFixed(1)}%</span></div></div>`).join('')}</div></div></div>`;
 }
+const PH_REPORT_REGIONS=[
+  {key:"ncr",name:"National Capital Region (NCR)"},
+  {key:"car",name:"Cordillera Administrative Region (CAR)"},
+  {key:"r1",name:"Region I (Ilocos Region)"},
+  {key:"r2",name:"Region II (Cagayan Valley)"},
+  {key:"r3",name:"Region III (Central Luzon)"},
+  {key:"r4a",name:"Region IV-A (CALABARZON)"},
+  {key:"mimaropa",name:"MIMAROPA Region"},
+  {key:"r5",name:"Region V (Bicol Region)"},
+  {key:"r6",name:"Region VI (Western Visayas)"},
+  {key:"nir",name:"Negros Island Region (NIR)"},
+  {key:"r7",name:"Region VII (Central Visayas)"},
+  {key:"r8",name:"Region VIII (Eastern Visayas)"},
+  {key:"r9",name:"Region IX (Zamboanga Peninsula)"},
+  {key:"r10",name:"Region X (Northern Mindanao)"},
+  {key:"r11",name:"Region XI (Davao Region)"},
+  {key:"r12",name:"Region XII (SOCCSKSARGEN)"},
+  {key:"r13",name:"Region XIII (Caraga)"},
+  {key:"barmm",name:"Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)"}
+];
+function reportRegionKey(value){
+  const s=String(value||'').trim().toLowerCase().replace(/[.\-–—_]/g,' ').replace(/\s+/g,' ');
+  if(!s)return "unspecified";
+  if(/^(ncr|national capital region|metro manila)/.test(s))return "ncr";
+  if(/^(car|cordillera administrative region)/.test(s))return "car";
+  if(/^region\s*i(\s*\(|$)/.test(s)||/ilocos region/.test(s))return "r1";
+  if(/^region\s*ii(\s*\(|$)/.test(s)||/cagayan valley/.test(s))return "r2";
+  if(/^region\s*iii(\s*\(|$)/.test(s)||/central luzon/.test(s))return "r3";
+  if(/^region\s*iv\s*a(\s*\(|$)/.test(s)||/calabarzon/.test(s))return "r4a";
+  if(/mimaropa/.test(s))return "mimaropa";
+  if(/^region\s*v(\s*\(|$)/.test(s)||/bicol region/.test(s))return "r5";
+  if(/^region\s*vi(\s*\(|$)/.test(s)||/western visayas/.test(s))return "r6";
+  if(/^(nir|negros island region)/.test(s))return "nir";
+  if(/^region\s*vii(\s*\(|$)/.test(s)||/central visayas/.test(s))return "r7";
+  if(/^region\s*viii(\s*\(|$)/.test(s)||/eastern visayas/.test(s))return "r8";
+  if(/^region\s*ix(\s*\(|$)/.test(s)||/zamboanga peninsula/.test(s))return "r9";
+  if(/^region\s*x(\s*\(|$)/.test(s)||/northern mindanao/.test(s))return "r10";
+  if(/^region\s*xi(\s*\(|$)/.test(s)||/davao region/.test(s))return "r11";
+  if(/^region\s*xii(\s*\(|$)/.test(s)||/soccsk?sargen|soccsksargen/.test(s))return "r12";
+  if(/^region\s*xiii(\s*\(|$)/.test(s)||/caraga/.test(s))return "r13";
+  if(/^(barmm|bangsamoro|bangsamoro autonomous region)/.test(s))return "barmm";
+  return "unspecified";
+}
 function reportGroupLocationStats(groups, field, limit=12){
   const all=[...groups.completed.map(r=>({...r,_status:'completed'})),...groups.processing.map(r=>({...r,_status:'processing'})),...groups.pending.map(r=>({...r,_status:'pending'}))];
   const map={};
   all.forEach(r=>{const key=String(r[field]||'').trim()||'Unspecified';if(!map[key])map[key]={completed:0,processing:0,pending:0,total:0};map[key][r._status]++;map[key].total++;});
-  return Object.entries(map).sort((a,b)=>b[1].total-a[1].total).slice(0,limit);
+  const rows=Object.entries(map).sort((a,b)=>b[1].total-a[1].total);
+  return limit===null ? rows.filter(([,v])=>v.total>0) : rows.slice(0,limit);
 }
-function reportStackedLocationChart(groups,field,title,subtitle){
-  const rows=reportGroupLocationStats(groups,field,12);
+function reportGroupRegionStats(groups){
+  const map={};
+  PH_REPORT_REGIONS.forEach(r=>map[r.key]={completed:0,processing:0,pending:0,total:0});
+  let unspecified={completed:0,processing:0,pending:0,total:0};
+  const all=[...groups.completed.map(r=>({...r,_status:'completed'})),...groups.processing.map(r=>({...r,_status:'processing'})),...groups.pending.map(r=>({...r,_status:'pending'}))];
+  all.forEach(r=>{const key=reportRegionKey(r.region);if(map[key]){map[key][r._status]++;map[key].total++;}else{unspecified[r._status]++;unspecified.total++;}});
+  const rows=PH_REPORT_REGIONS.map(r=>[r.name,map[r.key]]);
+  if(unspecified.total)rows.push(['Unspecified',unspecified]);
+  return rows;
+}
+function reportStackedLocationChart(groups,field,title,subtitle,locationLimit=12){
+  const isRegion=field==='region';
+  const rows=isRegion?reportGroupRegionStats(groups):reportGroupLocationStats(groups,field,locationLimit);
   if(!rows.length)return '';
   const max=Math.max(1,...rows.map(x=>x[1].total));
-  return `<div class="report-chart-card report-location-chart"><div class="report-chart-head"><div><h3>${chartEsc(title)}</h3><p>${chartEsc(subtitle)}</p></div><span class="report-chart-total">Top ${rows.length}</span></div><div class="report-bar-list">${rows.map(([name,v])=>{const cw=v.completed/max*100,pw=v.processing/max*100,qw=v.pending/max*100;return `<div class="report-bar-row"><div class="report-bar-label" title="${chartEsc(name)}">${chartEsc(name)}</div><div class="report-bar-track"><span class="report-bar-seg completed" style="width:${cw}%"></span><span class="report-bar-seg processing" style="width:${pw}%"></span><span class="report-bar-seg pending" style="width:${qw}%"></span></div><b class="report-bar-total">${v.total}</b></div>`;}).join('')}</div><div class="report-mini-legend"><span><i class="completed"></i>Completed</span><span><i class="processing"></i>Processing</span><span><i class="pending"></i>Pending</span></div></div>`;
+  const badge=isRegion?`${PH_REPORT_REGIONS.length} regions`:(locationLimit===null?`${rows.length} provinces`:`Top ${rows.length}`);
+  return `<div class="report-chart-card report-location-chart${isRegion?' report-region-chart':''}"><div class="report-chart-head"><div><h3>${chartEsc(title)}</h3><p>${chartEsc(subtitle)}</p></div><span class="report-chart-total">${badge}</span></div><div class="report-bar-list">${rows.map(([name,v])=>{const cw=v.completed/max*100,pw=v.processing/max*100,qw=v.pending/max*100;return `<div class="report-bar-row"><div class="report-bar-label" title="${chartEsc(name)}">${chartEsc(name)}</div><div class="report-bar-track"><span class="report-bar-seg completed" style="width:${cw}%"></span><span class="report-bar-seg processing" style="width:${pw}%"></span><span class="report-bar-seg pending" style="width:${qw}%"></span></div><b class="report-bar-total">${v.total}</b></div>`;}).join('')}</div><div class="report-mini-legend"><span><i class="completed"></i>Completed</span><span><i class="processing"></i>Processing</span><span><i class="pending"></i>Pending</span></div></div>`;
 }
 function reportChartSection(groups, opts={}){
   const status=reportStatusChart(groups);
-  const second=opts.locationField?reportStackedLocationChart(groups,opts.locationField,opts.locationTitle||'Requests by Location',opts.locationSubtitle||'Completed, processing, and pending requests by location.'):'';
+  const second=opts.locationField?reportStackedLocationChart(groups,opts.locationField,opts.locationTitle||'Requests by Location',opts.locationSubtitle||'Completed, processing, and pending requests.',opts.locationLimit===undefined?12:opts.locationLimit):'';
   const third=opts.regionField?reportStackedLocationChart(groups,opts.regionField,opts.regionTitle||'Requests by Region',opts.regionSubtitle||'Status distribution across regions.'):'';
   return `<section class="report-analytics"><div class="report-analytics-title"><span>Analytics & Insights</span><small>Live visual summary • updates with the report data</small></div><div class="report-chart-grid">${status}${second}${third}</div></section>`;
 }
@@ -1134,7 +1403,7 @@ function renderIntegrationReport(rows){
   <div class="report-source-summary"><div><span>Completed</span><b>${groups.completed.length}</b></div><div><span>Processing</span><b>${groups.processing.length}</b></div><div><span>Pending</span><b>${groups.pending.length}</b></div></div>
   <div class="report-sync-note">Synchronized with the Dashboard “Requests for Integration and Harmonization” Summary Card • Same Column S status mapping • Live</div>
   ${section("completed")}${section("processing")}${section("pending")}
-  ${reportChartSection(groups,{locationField:"province",locationTitle:"Requests by Province",locationSubtitle:"Top provinces by total classified requests.",regionField:"region",regionTitle:"Requests by Region",regionSubtitle:"Regional distribution of completed, processing, and pending requests."})}
+  ${reportChartSection(groups,{locationField:"province",locationTitle:"Requests by Province",locationSubtitle:"All provinces with classified requests.",regionField:"region",regionTitle:"Requests by Region",regionSubtitle:"Regional distribution of completed, processing, and pending requests.",locationLimit:null})}
   <div class="report-footer"><span>Source: Integration and Harmonization Google Sheet • 2026 • Date Received, Control No., Municipality, Province, Subject, Assigned Staff, Status, Remarks</span><span>Total classified requests: ${total}</span></div>`;
   document.getElementById("report-viewer-meta").textContent=`Live report • ${groups.completed.length} Completed • ${groups.processing.length} Processing • ${groups.pending.length} Pending`;
 }
@@ -1206,10 +1475,10 @@ function renderNpaaadReport(rows){
   Object.keys(groups).forEach(k=>sortReportRows(groups[k]));
   window.alrmsNpaaadReportGroups = groups;
 
-  // Pending requests are further segregated so every "Waiting for CSM"
-  // request is easy to identify. Both subsections remain date-sorted.
-  const waitingForCsm=groups.pending.filter(item=>normalizeSheetStatus(item.status)==="waiting for csm");
-  const otherPending=groups.pending.filter(item=>normalizeSheetStatus(item.status)!=="waiting for csm");
+  // Completed requests are divided into two report subsections:
+  // With CSM = original Completed Request records; Waiting for CSM = current Waiting for CSM records.
+  const withCsm=groups.completed.filter(item=>{const s=normalizeSheetStatus(item.status);return s==="completed request"||s==="completed";});
+  const waitingForCsm=groups.completed.filter(item=>normalizeSheetStatus(item.status)==="waiting for csm");
 
   const generated=new Date().toLocaleString([], {
     year:"numeric",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"
@@ -1228,15 +1497,15 @@ function renderNpaaadReport(rows){
   const section=(status)=>{
     const list=groups[status];
     let content="";
-    if(status==="pending"){
+    if(status==="completed"){
       content=`
+        <div class="report-subsection">
+          <div class="report-subsection-title">With CSM <span>${withCsm.length} request${withCsm.length===1?"":"s"}</span></div>
+          ${tableFor(withCsm)}
+        </div>
         <div class="report-subsection">
           <div class="report-subsection-title">Waiting for CSM <span>${waitingForCsm.length} request${waitingForCsm.length===1?"":"s"}</span></div>
           ${tableFor(waitingForCsm)}
-        </div>
-        <div class="report-subsection">
-          <div class="report-subsection-title">Other Pending Requests <span>${otherPending.length} request${otherPending.length===1?"":"s"}</span></div>
-          ${tableFor(otherPending)}
         </div>`;
     }else{
       content=tableFor(list);
@@ -1380,7 +1649,7 @@ function renderEo79Report(rows){
   <div class="report-source-summary"><div><span>Completed</span><b>${groups.completed.length}</b></div><div><span>Processing</span><b>${groups.processing.length}</b></div><div><span>Pending</span><b>${groups.pending.length}</b></div></div>
   <div class="report-sync-note">Synchronized with the Dashboard “E.O. 79 Matters” Summary Card • Same Column P status mapping • Live</div>
   ${section("completed")}${section("processing")}${section("pending")}
-  ${reportChartSection(groups,{locationField:"province",locationTitle:"E.O. 79 Matters by Province",locationSubtitle:"Top provinces by total classified E.O. 79 matters.",regionField:"region",regionTitle:"E.O. 79 Matters by Region",regionSubtitle:"Regional distribution of completed, processing, and pending matters."})}
+  ${reportChartSection(groups,{locationField:"province",locationTitle:"E.O. 79 Matters by Province",locationSubtitle:"All provinces with classified E.O. 79 matters.",regionField:"region",regionTitle:"E.O. 79 Matters by Region",regionSubtitle:"Regional distribution of completed, processing, and pending matters.",locationLimit:null})}
   <div class="report-footer"><span>Source: E.O. 79 Matters Google Sheet • 2026 • Date Endorsed, Applicant, Location, Area, Date Validated, Assigned To, Notes</span><span>Total classified requests: ${total}</span></div>`;
   document.getElementById("report-viewer-meta").textContent=`Live report • ${groups.completed.length} Completed • ${groups.processing.length} Processing • ${groups.pending.length} Pending`;
 }
@@ -1413,25 +1682,63 @@ function openEo79Report(){
 }
 function downloadEo79Pdf(){
   const groups=window.alrmsEo79ReportGroups;if(!groups)return;
-  const W=595.28,H=841.89,M=22,U=W-2*M,pages=[];let ops=[],y=H-M;
+  let W=595.28,H=841.89,M=22,U=W-2*M;const pages=[];let ops=[],y=H-M;
   const C={completed:[40,121,78],processing:[36,102,167],pending:[194,140,32]};
-  const page=()=>{if(ops.length)pages.push(ops.join("\n"));ops=[];y=H-M;};
+  const page=()=>{if(ops.length)pages.push({body:ops.join("\n"),W,H});ops=[];y=H-M;};
   const need=h=>{if(y-h<M)page();};
   const T=(x,yy,v,size=6.5,bold=false,c=[38,52,70])=>ops.push(`${c[0]/255} ${c[1]/255} ${c[2]/255} rg BT /${bold?'F2':'F1'} ${size} Tf ${x.toFixed(2)} ${yy.toFixed(2)} Td (${pdfEscape(v)}) Tj ET`);
   const R=(x,yy,w,h,c,stroke)=>{ops.push(`${c[0]/255} ${c[1]/255} ${c[2]/255} rg ${x} ${yy-h} ${w} ${h} re f`);if(stroke)ops.push(`${stroke[0]/255} ${stroke[1]/255} ${stroke[2]/255} RG .6 w ${x} ${yy-h} ${w} ${h} re S`);};
   const L=(x1,yy,x2,c=[215,222,229])=>ops.push(`${c[0]/255} ${c[1]/255} ${c[2]/255} RG .5 w ${x1} ${yy} m ${x2} ${yy} l S`);
   T(M,y,"BUREAU OF SOILS AND WATER MANAGEMENT • AGRICULTURAL LAND MANAGEMENT AND EVALUATION DIVISION",8,true,[45,58,77]);y-=17;T(M,y,"E.O. 79 Matters Report",17,true,[35,62,101]);y-=15;T(M,y,`CY 2026 • Live E.O. 79 records • Generated ${new Date().toLocaleString([], {year:"numeric",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"})}`,7,false,[75,82,92]);y-=10;L(M,y,W-M,[35,62,101]);y-=12;
   const sum=[['Completed',groups.completed.length,'completed'],['Processing',groups.processing.length,'processing'],['Pending',groups.pending.length,'pending']],gap=7,bw=(U-gap*2)/3;sum.forEach((a,i)=>{const x=M+i*(bw+gap);R(x,y,bw,36,[248,250,252],[220,226,233]);R(x,y,bw,4,C[a[2]]);T(x+8,y-13,a[0].toUpperCase(),6,true,[75,82,92]);T(x+8,y-29,String(a[1]),14,true,[35,62,101]);});y-=47;R(M,y,U,22,[246,249,251],[221,228,235]);T(M+7,y-14,'Synchronized with the Dashboard “E.O. 79 Matters” Summary Card • Same Column P mapping • Live',6);y-=31;
-  const table=list=>{if(!list.length){need(20);T(M+5,y-13,'No matching E.O. 79 matters found in the live sheet.',6.5,[100,108,118]);y-=20;return;}const ws=[55,105,135,48,62,72,90],hs=['DATE ENDORSED','APPLICANT','LOCATION','AREA (HA)','DATE VALIDATED','ASSIGNED TO','NOTES'];need(22);R(M,y,U,20,[245,247,250],[218,225,232]);let x=M+3;hs.forEach((h,i)=>{T(x,y-13,h,4.8,true,[35,62,101]);x+=ws[i];});y-=20;for(const r of list){const cells=[r.date,r.applicant,r.location,r.area,r.validated,r.assigned,r.notes],wraps=cells.map((c,i)=>pdfWrap(c,Math.max(7,Math.floor(ws[i]/4.25)))),rh=Math.max(...wraps.map(a=>a.length))*6.7+6;need(rh+1);wraps.forEach((arr,i)=>arr.forEach((ln,j)=>T(M+3+ws.slice(0,i).reduce((a,b)=>a+b,0),y-11-j*6.7,ln,5.3)));L(M,y-rh,M+U);y-=rh;}};
-  ['completed','processing','pending'].forEach(k=>{const list=groups[k];need(30);R(M,y,U,25,C[k]);T(M+8,y-16,k==='completed'?'Completed':k==='processing'?'Processing':'Pending',7.5,true,[255,255,255]);T(W-M-58,y-16,`${list.length}`,7,true,[255,255,255]);y-=30;table(list);y-=5;});need(20);L(M,y,W-M);y-=11;T(M,y,'Source: E.O. 79 Matters Google Sheet • 2026 • Columns B,E,F,I,J,K,L,M,N,O,P',5.5,false,[95,104,115]);page();
-  const objs=[],add=o=>(objs.push(o),objs.length),f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'),f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>'),contents=[],pids=[];for(const body of pages)contents.push(add(`<< /Length ${body.length} >>\nstream\n${body}\nendstream`));const pagesId=add('');for(let i=0;i<pages.length;i++)pids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${contents[i]} 0 R >>`));objs[pagesId-1]=`<< /Type /Pages /Kids [${pids.map(id=>id+' 0 R').join(' ')}] /Count ${pids.length} >>`;const root=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);let out='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n',off=[0];for(let i=0;i<objs.length;i++){off[i+1]=out.length;out+=`${i+1} 0 obj\n${objs[i]}\nendobj\n`;}const xr=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;for(let i=1;i<objs.length;i++)out+=String(off[i]).padStart(10,'0')+' 00000 n \n';out+=`trailer\n<< /Size ${objs.length+1} /Root ${root} 0 R >>\nstartxref\n${xr}\n%%EOF`;const a=document.createElement('a'),url=URL.createObjectURL(new Blob([out],{type:'application/pdf'}));a.href=url;a.download='EO79_Matters_Report_CY2026.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  const table=list=>{
+    if(!list.length){need(20);T(M+5,y-13,'No matching E.O. 79 matters found in the live sheet.',6.5,false,[100,108,118]);y-=20;return;}
+    // Revision 120: E.O. 79 PDF header readability fix.
+    // Use explicit compact header labels, fixed line spacing, and column widths that stay
+    // strictly inside the A4 printable width so DATE/APPLICANT/LOCATION never overlap.
+    const ws=[49,115,110,44,57,69,101],hs=[
+      'DATE\nENDORSED',
+      'APPLICANT\nNAME /\nREPRESENTATIVE',
+      'LOCATION',
+      'AREA (HA)',
+      'DATE\nVALIDATED',
+      'ASSIGNED\nTO',
+      'NOTES'
+    ];
+    const headerFont=3.7, headerLine=5.2, headerPad=7;
+    const headerLines=hs.map(h=>String(h).split('\n'));
+    const headerH=Math.max(31,Math.max(...headerLines.map(a=>a.length))*headerLine+headerPad);
+    need(headerH+2);
+    R(M,y,U,headerH,[245,247,250],[218,225,232]);
+    let x=M+3;
+    hs.forEach((h,i)=>{
+      const lines=headerLines[i];
+      lines.forEach((ln,j)=>T(x,y-10-j*headerLine,ln,headerFont,true,[35,62,101]));
+      x+=ws[i];
+    });
+    y-=headerH;
+    for(const r of list){
+      const cells=[r.date,r.applicant,r.location,r.area,r.validated,r.assigned,r.notes];
+      const wraps=cells.map((c,i)=>pdfWrap(c,Math.max(7,Math.floor(ws[i]/4.15))));
+      const rh=Math.max(1,Math.max(...wraps.map(a=>a.length)))*6.7+6;
+      need(rh+1);
+      wraps.forEach((arr,i)=>arr.forEach((ln,j)=>T(M+3+ws.slice(0,i).reduce((a,b)=>a+b,0),y-11-j*6.7,ln,5.15)));
+      L(M,y-rh,M+U);
+      y-=rh;
+    }
+  };
+  ['completed','processing','pending'].forEach(k=>{const list=groups[k];need(30);R(M,y,U,25,C[k]);T(M+8,y-16,k==='completed'?'Completed':k==='processing'?'Processing':'Pending',7.5,true,[255,255,255]);T(W-M-58,y-16,`${list.length}`,7,true,[255,255,255]);y-=30;table(list);y-=5;});
+  page(); W=841.89;H=595.28;M=24;U=W-2*M;y=H-M;
+  drawPdfAnalyticsLandscape(groups,{M,W,U,yRef:()=>y,setY:v=>{y=v;},need,T,R,L,C,ops},{locationField:'province',locationTitle:'E.O. 79 Matters by Province',regionField:'region',regionTitle:'E.O. 79 Matters by Region'});
+  need(20);L(M,y,W-M);y-=11;T(M,y,'Source: E.O. 79 Matters Google Sheet • 2026 • Columns B,E,F,I,J,K,L,M,N,O,P',5.5,false,[95,104,115]);page();
+  const objs=[],add=o=>(objs.push(o),objs.length),f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'),f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>'),contents=[],pids=[];for(const pg of pages)contents.push(add(`<< /Length ${pg.body.length} >>\nstream\n${pg.body}\nendstream`));const pagesId=add('');for(let i=0;i<pages.length;i++)pids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${pages[i].W} ${pages[i].H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${contents[i]} 0 R >>`));objs[pagesId-1]=`<< /Type /Pages /Kids [${pids.map(id=>id+' 0 R').join(' ')}] /Count ${pids.length} >>`;const root=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);let out='%PDF-1.4\n%ALRMS\n',off=[0];for(let i=0;i<objs.length;i++){off[i+1]=out.length;out+=`${i+1} 0 obj\n${objs[i]}\nendobj\n`;}const xr=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;for(let i=1;i<=objs.length;i++)out+=String(off[i]).padStart(10,'0')+' 00000 n \n';out+=`trailer\n<< /Size ${objs.length+1} /Root ${root} 0 R >>\nstartxref\n${xr}\n%%EOF`;saveGeneratedPdf(out,'EO79_Matters_Report_CY2026.pdf');
 }
 
 function downloadIntegrationPdf(){
   const groups=window.alrmsIntegrationReportGroups;if(!groups)return;
-  const W=595.28,H=841.89,M=24,U=W-2*M,pages=[];let ops=[],y=H-M;
+  let W=595.28,H=841.89,M=24,U=W-2*M;const pages=[];let ops=[],y=H-M;
   const C={completed:[40,121,78],processing:[36,102,167],pending:[194,140,32]};
-  const page=()=>{if(ops.length)pages.push(ops.join("\n"));ops=[];y=H-M;};
+  const page=()=>{if(ops.length)pages.push({body:ops.join("\n"),W,H});ops=[];y=H-M;};
   const need=h=>{if(y-h<M)page();};
   const T=(x,yy,v,size=7,bold=false,c=[38,52,70])=>ops.push(`${c[0]/255} ${c[1]/255} ${c[2]/255} rg BT /${bold?'F2':'F1'} ${size} Tf ${x.toFixed(2)} ${yy.toFixed(2)} Td (${pdfEscape(v)}) Tj ET`);
   const R=(x,yy,w,h,c,stroke)=>{ops.push(`${c[0]/255} ${c[1]/255} ${c[2]/255} rg ${x} ${yy-h} ${w} ${h} re f`);if(stroke)ops.push(`${stroke[0]/255} ${stroke[1]/255} ${stroke[2]/255} RG .6 w ${x} ${yy-h} ${w} ${h} re S`);};
@@ -1440,8 +1747,11 @@ function downloadIntegrationPdf(){
   const sum=[['Completed',groups.completed.length,'completed'],['Processing',groups.processing.length,'processing'],['Pending',groups.pending.length,'pending']],gap=7,bw=(U-gap*2)/3;sum.forEach((a,i)=>{const x=M+i*(bw+gap);R(x,y,bw,36,[248,250,252],[220,226,233]);R(x,y,bw,4,C[a[2]]);T(x+8,y-13,a[0].toUpperCase(),6,true,[75,82,92]);T(x+8,y-29,String(a[1]),14,true,[35,62,101]);});y-=47;
   R(M,y,U,22,[246,249,251],[221,228,235]);T(M+7,y-14,'Synchronized with the Dashboard “Requests for Integration and Harmonization” Summary Card • Same Column S mapping • Live',6);y-=31;
   const table=list=>{if(!list.length){need(20);T(M+5,y-13,'No matching requests found in the live sheet.',6.5,[100,108,118]);y-=20;return;}const ws=[55,78,92,100,70,72,80],hs=['DATE','CONTROL NO.','REQUESTOR','SUBJECT','ASSIGNED STAFF','STATUS','REMARKS'];need(22);R(M,y,U,20,[245,247,250],[218,225,232]);let x=M+4;hs.forEach((h,i)=>{T(x,y-13,h,5.3,true,[35,62,101]);x+=ws[i];});y-=20;for(const r of list){const cells=[r.date,r.control,r.requester,r.subject,r.staff,r.status,r.remarks],wraps=cells.map((c,i)=>pdfWrap(c,Math.max(8,Math.floor(ws[i]/4.3)))),rh=Math.max(...wraps.map(a=>a.length))*7+6;need(rh+1);wraps.forEach((arr,i)=>arr.forEach((ln,j)=>T(M+4+ws.slice(0,i).reduce((a,b)=>a+b,0),y-11-j*7,ln,5.8)));L(M,y-rh,M+U);y-=rh;}};
-  ['completed','processing','pending'].forEach(k=>{const list=groups[k];need(30);R(M,y,U,25,C[k]);T(M+8,y-16,k==='completed'?'Completed':k==='processing'?'Processing':'Pending',7.5,true,[255,255,255]);T(W-M-58,y-16,`${list.length}`,7,true,[255,255,255]);y-=30;table(list);y-=5;});need(20);L(M,y,W-M);y-=11;T(M,y,'Source: Integration and Harmonization Google Sheet • 2026 • Columns D,E,B+C,F,R,S,T',5.5,false,[95,104,115]);page();
-  const objs=[],add=o=>(objs.push(o),objs.length),f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'),f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>'),contents=[],pids=[];for(const body of pages)contents.push(add(`<< /Length ${body.length} >>\nstream\n${body}\nendstream`));const pagesId=add('');for(let i=0;i<pages.length;i++)pids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${contents[i]} 0 R >>`));objs[pagesId-1]=`<< /Type /Pages /Kids [${pids.map(id=>id+' 0 R').join(' ')}] /Count ${pids.length} >>`;const root=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);let out='%PDF-1.4\n%\xE2\xE3\xCF\xD3\n',off=[0];for(let i=0;i<objs.length;i++){off[i+1]=out.length;out+=`${i+1} 0 obj\n${objs[i]}\nendobj\n`;}const xr=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;for(let i=1;i<objs.length;i++)out+=String(off[i]).padStart(10,'0')+' 00000 n \n';out+=`trailer\n<< /Size ${objs.length+1} /Root ${root} 0 R >>\nstartxref\n${xr}\n%%EOF`;const a=document.createElement('a'),url=URL.createObjectURL(new Blob([out],{type:'application/pdf'}));a.href=url;a.download='Integration_and_Harmonization_Report_CY2026.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  ['completed','processing','pending'].forEach(k=>{const list=groups[k];need(30);R(M,y,U,25,C[k]);T(M+8,y-16,k==='completed'?'Completed':k==='processing'?'Processing':'Pending',7.5,true,[255,255,255]);T(W-M-58,y-16,`${list.length}`,7,true,[255,255,255]);y-=30;table(list);y-=5;});
+  page(); W=841.89;H=595.28;M=24;U=W-2*M;y=H-M;
+  drawPdfAnalyticsLandscape(groups,{M,W,U,yRef:()=>y,setY:v=>{y=v;},need,T,R,L,C,ops},{locationField:'province',locationTitle:'Requests by Province',regionField:'region',regionTitle:'Requests by Region'});
+  need(20);L(M,y,W-M);y-=11;T(M,y,'Source: Integration and Harmonization Google Sheet • 2026 • Columns D,E,B+C,F,R,S,T',5.5,false,[95,104,115]);page();
+  const objs=[],add=o=>(objs.push(o),objs.length),f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'),f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>'),contents=[],pids=[];for(const pg of pages)contents.push(add(`<< /Length ${pg.body.length} >>\nstream\n${pg.body}\nendstream`));const pagesId=add('');for(let i=0;i<pages.length;i++)pids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${pages[i].W} ${pages[i].H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${contents[i]} 0 R >>`));objs[pagesId-1]=`<< /Type /Pages /Kids [${pids.map(id=>id+' 0 R').join(' ')}] /Count ${pids.length} >>`;const root=add(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);let out='%PDF-1.4\n%ALRMS\n',off=[0];for(let i=0;i<objs.length;i++){off[i+1]=out.length;out+=`${i+1} 0 obj\n${objs[i]}\nendobj\n`;}const xr=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;for(let i=1;i<=objs.length;i++)out+=String(off[i]).padStart(10,'0')+' 00000 n \n';out+=`trailer\n<< /Size ${objs.length+1} /Root ${root} 0 R >>\nstartxref\n${xr}\n%%EOF`;saveGeneratedPdf(out,'Integration_and_Harmonization_Report_CY2026.pdf');
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
@@ -1451,9 +1761,13 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.getElementById("report-back")?.addEventListener("click",closeReportViewer);
   document.getElementById("report-print")?.addEventListener("click",()=>{
     const oldTitle=document.title;
-    document.title="NPAAAD_and_SAFDZ_Request_Report_CY2026";
+    const titles={
+      npaaad:"NPAAAD_and_SAFDZ_Request_Report_CY2026",
+      integration:"Integration_and_Harmonization_Report_CY2026",
+      eo79:"EO79_Matters_Report_CY2026"
+    };
+    document.title=titles[activeReportType]||"ALRMS_Report_CY2026";
     window.print();
     setTimeout(()=>{document.title=oldTitle;},1000);
   });
-  document.getElementById("report-download")?.addEventListener("click",()=>{ if(window.alrmsEo79ReportGroups) downloadEo79Pdf(); else if(window.alrmsIntegrationReportGroups) downloadIntegrationPdf(); else downloadNpaaadPdf(); });
 });
